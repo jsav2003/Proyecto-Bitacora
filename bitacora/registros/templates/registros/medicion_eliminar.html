@@ -1,0 +1,35 @@
+{% extends 'registros/base.html' %}
+
+{% block title %}Eliminar Medición{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación</h4>
+            </div>
+            <div class="card-body">
+                <p>¿Estás seguro de que deseas eliminar esta medición?</p>
+                <ul>
+                    <li><strong>Estudiante:</strong> {{ medicion.estudiante.nombre }}</li>
+                    <li><strong>Día:</strong> {{ medicion.dia }}</li>
+                    <li><strong>Fecha de registro:</strong> {{ medicion.fecha_registro|date:"d/m/Y H:i" }}</li>
+                </ul>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'medicion_listar' %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Sí, Eliminar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

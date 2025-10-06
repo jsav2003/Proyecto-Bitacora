@@ -1,0 +1,43 @@
+{% extends 'registros/base.html' %}
+
+{% block title %}Eliminar Registro Fotográfico{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación</h4>
+            </div>
+            <div class="card-body">
+                <p>¿Estás seguro de que deseas eliminar este registro fotográfico?</p>
+                
+                <div class="text-center mb-3">
+                    <img src="{{ registro.imagen.url }}" alt="Fotografía" 
+                         class="img-fluid rounded" style="max-height: 300px;">
+                </div>
+                
+                <ul>
+                    <li><strong>Estudiante:</strong> {{ registro.estudiante.nombre }}</li>
+                    <li><strong>Fecha:</strong> {{ registro.fecha|date:"d/m/Y H:i" }}</li>
+                    {% if registro.comentario %}
+                    <li><strong>Comentario:</strong> {{ registro.comentario }}</li>
+                    {% endif %}
+                </ul>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'registro_fotografico_listar' %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Sí, Eliminar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

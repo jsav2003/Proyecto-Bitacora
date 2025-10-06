@@ -1,0 +1,71 @@
+{% extends 'registros/base.html' %}
+
+{% block title %}Estudiantes Registrados{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-people"></i> Estudiantes Registrados</h2>
+    <a href="{% url 'estudiante_crear' %}" class="btn btn-primary">
+        <i class="bi bi-plus-circle"></i> Nuevo Estudiante
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-10">
+                <input type="text" name="buscar" class="form-control" 
+                       placeholder="Buscar por nombre, correo o grupo..." 
+                       value="{{ busqueda }}">
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-success w-100">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if estudiantes %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-primary">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Correo Institucional</th>
+                <th>Grupo</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for estudiante in estudiantes %}
+            <tr>
+                <td>{{ estudiante.id }}</td>
+                <td>{{ estudiante.nombre }}</td>
+                <td>{{ estudiante.correo_institucional }}</td>
+                <td><span class="badge bg-info">Grupo {{ estudiante.grupo }}</span></td>
+                <td class="text-center">
+                    <a href="{% url 'estudiante_editar' estudiante.pk %}" 
+                       class="btn btn-sm btn-warning" title="Editar">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{% url 'estudiante_eliminar' estudiante.pk %}" 
+                       class="btn btn-sm btn-danger" title="Eliminar">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<p class="text-muted">Total: {{ estudiantes|length }} estudiante(s)</p>
+{% else %}
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> No hay estudiantes registrados.
+    <a href="{% url 'estudiante_crear' %}">Registra el primero aquí</a>.
+</div>
+{% endif %}
+{% endblock %}

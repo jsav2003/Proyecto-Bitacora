@@ -1,0 +1,80 @@
+{% extends 'registros/base.html' %}
+
+{% block title %}Registros Fotográficos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-camera"></i> Registros Fotográficos</h2>
+    <a href="{% url 'registro_fotografico_crear' %}" class="btn btn-info">
+        <i class="bi bi-plus-circle"></i> Nuevo Registro
+    </a>
+</div>
+
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-10">
+                <select name="estudiante" class="form-control">
+                    <option value="">-- Todos los estudiantes --</option>
+                    {% for estudiante in estudiantes %}
+                        <option value="{{ estudiante.id }}" 
+                                {% if estudiante.id|stringformat:"s" == estudiante_seleccionado %}selected{% endif %}>
+                            {{ estudiante.nombre }} - Grupo {{ estudiante.grupo }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-info w-100">
+                    <i class="bi bi-filter"></i> Filtrar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if registros %}
+<div class="row">
+    {% for registro in registros %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <img src="{{ registro.imagen.url }}" class="card-img-top" alt="Fotografía" 
+                 style="height: 250px; object-fit: cover;">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-person"></i> {{ registro.estudiante.nombre }}
+                </h5>
+                <p class="card-text">
+                    <small class="text-muted">
+                        <i class="bi bi-calendar"></i> {{ registro.fecha|date:"d/m/Y H:i" }}
+                    </small>
+                </p>
+                {% if registro.comentario %}
+                <p class="card-text">{{ registro.comentario|truncatewords:20 }}</p>
+                {% else %}
+                <p class="card-text text-muted"><em>Sin comentarios</em></p>
+                {% endif %}
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ registro.imagen.url }}" target="_blank" class="btn btn-sm btn-outline-info">
+                        <i class="bi bi-eye"></i> Ver completa
+                    </a>
+                    <a href="{% url 'registro_fotografico_eliminar' registro.pk %}" 
+                       class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+<p class="text-muted mt-3">Total: {{ registros|length }} registro(s) fotográfico(s)</p>
+{% else %}
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i> No hay registros fotográficos.
+    <a href="{% url 'registro_fotografico_crear' %}">Sube el primero aquí</a>.
+</div>
+{% endif %}
+{% endblock %}

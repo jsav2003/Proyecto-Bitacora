@@ -1,0 +1,79 @@
+{% extends 'registros/base.html' %}
+
+{% block title %}Inicio - Bitácora Científica{% endblock %}
+
+{% block content %}
+<div class="jumbotron bg-light p-5 rounded">
+    <h1 class="display-4"><i class="bi bi-seedling text-success"></i> Bitácora Científica</h1>
+    <p class="lead">Sistema de registro para el experimento de crecimiento de plantas de frijol</p>
+    <hr class="my-4">
+    <p>Registra estudiantes, mediciones diarias y fotografías del experimento.</p>
+</div>
+
+<div class="row mt-5">
+    <div class="col-md-4 mb-4">
+        <div class="card text-center border-primary">
+            <div class="card-body">
+                <i class="bi bi-people fs-1 text-primary"></i>
+                <h2 class="card-title mt-3">{{ estudiantes_count }}</h2>
+                <p class="card-text">Estudiantes Registrados</p>
+                <a href="{% url 'estudiante_crear' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Registrar Estudiante
+                </a>
+                <a href="{% url 'estudiante_listar' %}" class="btn btn-outline-primary">
+                    Ver Todos
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card text-center border-success">
+            <div class="card-body">
+                <i class="bi bi-bar-chart fs-1 text-success"></i>
+                <h2 class="card-title mt-3">{{ mediciones_count }}</h2>
+                <p class="card-text">Mediciones Registradas</p>
+                <a href="{% url 'medicion_crear' %}" class="btn btn-success">
+                    <i class="bi bi-plus-circle"></i> Registrar Medición
+                </a>
+                <a href="{% url 'medicion_listar' %}" class="btn btn-outline-success">
+                    Ver Todas
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-4">
+        <div class="card text-center border-info">
+            <div class="card-body">
+                <i class="bi bi-camera fs-1 text-info"></i>
+                <h2 class="card-title mt-3">{{ fotos_count }}</h2>
+                <p class="card-text">Fotografías Registradas</p>
+                <a href="{% url 'registro_fotografico_crear' %}" class="btn btn-info">
+                    <i class="bi bi-plus-circle"></i> Registrar Foto
+                </a>
+                <a href="{% url 'registro_fotografico_listar' %}" class="btn btn-outline-info">
+                    Ver Todas
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Instrucciones</h5>
+            </div>
+            <div class="card-body">
+                <ol>
+                    <li><strong>Registrar Estudiantes:</strong> Primero debes registrar a los estudiantes que participarán en el experimento.</li>
+                    <li><strong>Registrar Mediciones:</strong> Cada día, registra las alturas de las tres plantas para cada estudiante.</li>
+                    <li><strong>Registrar Fotografías:</strong> Captura y sube fotografías del experimento con comentarios descriptivos.</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

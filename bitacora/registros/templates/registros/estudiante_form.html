@@ -1,0 +1,59 @@
+{% extends 'registros/base.html' %}
+
+{% block title %}{{ accion }} Estudiante{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0"><i class="bi bi-person-plus"></i> {{ accion }} Estudiante</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" novalidate>
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.nombre.id_for_label }}" class="form-label">
+                            {{ form.nombre.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.nombre }}
+                        {% if form.nombre.errors %}
+                            <div class="text-danger">{{ form.nombre.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.correo_institucional.id_for_label }}" class="form-label">
+                            {{ form.correo_institucional.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.correo_institucional }}
+                        {% if form.correo_institucional.errors %}
+                            <div class="text-danger">{{ form.correo_institucional.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.grupo.id_for_label }}" class="form-label">
+                            {{ form.grupo.label }} <span class="text-danger">*</span>
+                        </label>
+                        {{ form.grupo }}
+                        {% if form.grupo.errors %}
+                            <div class="text-danger">{{ form.grupo.errors }}</div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <a href="{% url 'estudiante_listar' %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-save"></i> Guardar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
