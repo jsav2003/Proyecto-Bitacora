@@ -1,0 +1,607 @@
+/* ========================================
+   BITÁCORA CIENTÍFICA - ESTILOS PERSONALIZADOS
+   ======================================== */
+
+/* Variables CSS */
+:root {
+    --primary-color: #0d6efd;
+    --success-color: #198754;
+    --warning-color: #ffc107;
+    --danger-color: #dc3545;
+    --info-color: #0dcaf0;
+    --light-bg: #f8f9fa;
+    --dark-text: #212529;
+    --border-radius: 0.5rem;
+    --transition-speed: 0.3s;
+    --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 1rem 3rem rgba(0, 0, 0, 0.175);
+}
+
+/* Animación de fade-in para páginas */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos Generales */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--light-bg);
+    animation: fadeIn 0.5s ease-in;
+    padding-bottom: 0;
+}
+
+main {
+    flex: 1;
+    padding-bottom: 8rem;
+    margin-bottom: 3rem;
+    min-height: calc(100vh - 300px);
+}
+
+/* Navbar Personalizado */
+.navbar {
+    box-shadow: var(--shadow-md);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    transition: transform var(--transition-speed);
+}
+
+.navbar-brand:hover {
+    transform: scale(1.05);
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: all var(--transition-speed);
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem !important;
+    margin: 0 0.25rem;
+}
+
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+    color: white;
+    padding: 4rem 0;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.hero-section .content {
+    position: relative;
+    z-index: 1;
+}
+
+/* Cards Personalizados */
+.card {
+    border: none;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-speed);
+    overflow: hidden;
+    height: 100%;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-lg);
+}
+
+.card-stats {
+    border-top: 4px solid;
+}
+
+.card-stats.border-primary {
+    border-top-color: var(--primary-color);
+}
+
+.card-stats.border-success {
+    border-top-color: var(--success-color);
+}
+
+.card-stats.border-info {
+    border-top-color: var(--info-color);
+}
+
+.card-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+    transition: transform var(--transition-speed);
+}
+
+.card:hover .card-icon {
+    transform: scale(1.2) rotate(5deg);
+}
+
+.stats-number {
+    font-size: 3rem;
+    font-weight: 700;
+    margin: 0.5rem 0;
+    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Botones Personalizados */
+.btn {
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    padding: 0.5rem 1.5rem;
+    transition: all var(--transition-speed);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn i {
+    transition: transform var(--transition-speed);
+}
+
+.btn:hover i {
+    transform: translateX(3px);
+}
+
+.btn-action {
+    padding: 0.375rem 0.75rem;
+}
+
+/* Tablas Personalizadas */
+.table-container {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: linear-gradient(135deg, var(--success-color) 0%, #20c997 100%);
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.5px;
+    border: none;
+    padding: 1rem;
+}
+
+.table tbody tr {
+    transition: all var(--transition-speed);
+}
+
+.table tbody tr:hover {
+    background-color: rgba(25, 135, 84, 0.05);
+    transform: scale(1.01);
+    box-shadow: var(--shadow-sm);
+}
+
+/* DataTables Personalización */
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter,
+.dataTables_wrapper .dataTables_info,
+.dataTables_wrapper .dataTables_paginate {
+    padding: 0.5rem 0;
+}
+
+.dataTables_wrapper .dataTables_filter input {
+    border-radius: var(--border-radius);
+    border: 2px solid #e9ecef;
+    padding: 0.5rem 1rem;
+    transition: all var(--transition-speed);
+}
+
+.dataTables_wrapper .dataTables_filter input:focus {
+    border-color: var(--success-color);
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.page-item.active .page-link {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.page-link {
+    color: var(--success-color);
+}
+
+.page-link:hover {
+    background-color: rgba(25, 135, 84, 0.1);
+    color: var(--success-color);
+}
+
+/* Thumbnail de Imágenes */
+.img-thumbnail-custom {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-speed);
+    cursor: pointer;
+    border: 3px solid #e9ecef;
+}
+
+.img-thumbnail-custom:hover {
+    transform: scale(3);
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+    border-color: var(--success-color);
+}
+
+/* Formularios Personalizados */
+.form-container {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+    margin: 2rem auto 3rem auto;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select {
+    border-radius: var(--border-radius);
+    border: 2px solid #e9ecef;
+    padding: 0.75rem 1rem;
+    transition: all var(--transition-speed);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--success-color);
+    box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.invalid-feedback {
+    display: block;
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+/* Vista Previa de Imagen */
+#imagePreview {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    margin-top: 1rem;
+    display: none;
+    animation: fadeIn 0.5s ease-in;
+}
+
+#imagePreview.show {
+    display: block;
+}
+
+/* Badges Personalizados */
+.badge {
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    border-radius: var(--border-radius);
+}
+
+.badge-count {
+    font-size: 1.5rem;
+    padding: 0.75rem 1.5rem;
+}
+
+/* Alertas Personalizadas */
+.alert {
+    border-radius: var(--border-radius);
+    border: none;
+    box-shadow: var(--shadow-sm);
+    animation: fadeIn 0.5s ease-in;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d1e7dd 0%, #a3cfbb 100%);
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f1aeb5 100%);
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #cff4fc 0%, #9eeaf9 100%);
+}
+
+/* Estado Vacío */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.empty-state i {
+    font-size: 5rem;
+    color: #dee2e6;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.breadcrumb-item.active {
+    color: var(--success-color);
+    font-weight: 600;
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+    color: white;
+    padding: 2rem 0;
+    margin-top: 5rem;
+    box-shadow: var(--shadow-lg);
+    position: relative;
+    width: 100%;
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+footer a {
+    color: white;
+    text-decoration: none;
+    transition: all var(--transition-speed);
+}
+
+footer a:hover {
+    color: #a3cfbb;
+    text-decoration: underline;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    vertical-align: text-bottom;
+    border: 0.25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border 0.75s linear infinite;
+}
+
+@keyframes spinner-border {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Tooltips Personalizados */
+.tooltip-inner {
+    background-color: var(--dark-text);
+    border-radius: var(--border-radius);
+    padding: 0.5rem 1rem;
+}
+
+/* Espaciado extra para cards después de formularios */
+.form-container + .card,
+.form-container + .row .card {
+    margin-bottom: 6rem !important;
+}
+
+/* Card de información/consejos después del formulario */
+.card.border-info,
+.card.mt-4 {
+    margin-bottom: 6rem !important;
+}
+
+/* Card de consejos/información con clase específica - MARGEN MUY GRANDE */
+.info-card {
+    margin-bottom: 10rem !important;
+    position: relative;
+    z-index: 1;
+}
+
+/* Espaciado general para evitar solapamiento del footer */
+.container > .row:last-child,
+.container > .card:last-child,
+.container > div:last-child {
+    margin-bottom: 6rem !important;
+}
+
+/* Responsividad Mejorada */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 2rem 0;
+    }
+
+    .stats-number {
+        font-size: 2rem;
+    }
+
+    .card-icon {
+        font-size: 2rem;
+    }
+
+    .form-container {
+        padding: 1.5rem;
+    }
+
+    .table-container {
+        padding: 1rem;
+    }
+
+    .navbar-brand {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn {
+        padding: 0.375rem 1rem;
+        font-size: 0.875rem;
+    }
+
+    .btn-lg {
+        padding: 0.5rem 1.25rem;
+        font-size: 1rem;
+    }
+
+    .hero-section {
+        padding: 1.5rem 0;
+    }
+
+    .empty-state {
+        padding: 2rem 1rem;
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+    }
+}
+
+/* Animaciones Adicionales */
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+/* Estilos para Confirmación de Eliminación */
+.delete-confirmation {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-lg);
+    padding: 2rem;
+    max-width: 500px;
+    margin: 2rem auto 5rem auto;
+}
+
+.delete-confirmation .warning-icon {
+    font-size: 4rem;
+    color: var(--danger-color);
+    margin-bottom: 1rem;
+}
+
+/* Mejoras de Accesibilidad */
+.btn:focus,
+.form-control:focus,
+.form-select:focus {
+    outline: none;
+}
+
+a:focus,
+button:focus {
+    outline: 2px solid var(--success-color);
+    outline-offset: 2px;
+}
+
+/* Scroll Suave */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Print Styles */
+@media print {
+    .navbar,
+    footer,
+    .btn,
+    .breadcrumb {
+        display: none;
+    }
+
+    body {
+        background: white;
+    }
+
+    .card {
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+    }
+}

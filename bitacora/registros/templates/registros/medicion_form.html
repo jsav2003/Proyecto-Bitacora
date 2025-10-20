@@ -1,59 +1,172 @@
 {% extends 'registros/base.html' %}
 
-{% block title %}{{ accion }} Medición{% endblock %}
+{% block title %}{{ accion }} Medición - Bitácora Científica{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}"><i class="bi bi-house-fill"></i> Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'medicion_listar' %}">Mediciones</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-success text-white">
-                <h4 class="mb-0"><i class="bi bi-bar-chart"></i> {{ accion }} Medición de Plantas</h4>
+    <div class="col-lg-8 col-md-10">
+        <!-- Card del Formulario -->
+        <div class="form-container">
+            <!-- Encabezado -->
+            <div class="text-center mb-4">
+                <div class="mb-3">
+                    <i class="bi {% if accion == 'Registrar' %}bi-bar-chart-line-fill{% else %}bi-pencil-square{% endif %} text-success" style="font-size: 3rem;"></i>
+                </div>
+                <h2 class="fw-bold">
+                    {% if accion == 'Registrar' %}
+                        <i class="bi bi-plus-circle-fill text-success me-2"></i> Registrar Nueva Medición
+                    {% else %}
+                        <i class="bi bi-pencil-fill text-warning me-2"></i> Editar Medición
+                    {% endif %}
+                </h2>
+                <p class="text-muted">Registra la altura de la planta del estudiante para el día indicado</p>
             </div>
+
+            <!-- Formulario -->
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <!-- Campo: Estudiante -->
+                <div class="mb-4">
+                    <label for="{{ form.estudiante.id_for_label }}" class="form-label">
+                        <i class="bi bi-person-fill text-success me-2"></i>
+                        {{ form.estudiante.label }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <select name="{{ form.estudiante.name }}" 
+                            id="{{ form.estudiante.id_for_label }}"
+                            class="form-select {% if form.estudiante.errors %}is-invalid{% endif %}" 
+                            required>
+                        <option value="">-- Selecciona un estudiante --</option>
+                        {% for choice in form.estudiante.field.queryset %}
+                            <option value="{{ choice.pk }}" {% if form.estudiante.value == choice.pk %}selected{% endif %}>
+                                {{ choice.nombre }} - Grupo {{ choice.grupo }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Selecciona el estudiante que realizó la medición
+                    </div>
+                    {% if form.estudiante.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.estudiante.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo: Día -->
+                <div class="mb-4">
+                    <label for="{{ form.dia.id_for_label }}" class="form-label">
+                        <i class="bi bi-calendar-day-fill text-success me-2"></i>
+                        {{ form.dia.label }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="number" 
+                           name="{{ form.dia.name }}" 
+                           id="{{ form.dia.id_for_label }}"
+                           class="form-control {% if form.dia.errors %}is-invalid{% endif %}" 
+                           placeholder="Ejemplo: 1, 2, 3, 4, 5..."
+                           value="{{ form.dia.value|default:'' }}"
+                           min="1"
+                           required>
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Número del día del experimento (1 para el primer día, 2 para el segundo, etc.)
+                    </div>
+                    {% if form.dia.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.dia.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo: Altura -->
+                <div class="mb-4">
+                    <label for="{{ form.altura.id_for_label }}" class="form-label">
+                        <i class="bi bi-rulers text-success me-2"></i>
+                        {{ form.altura.label }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <div class="input-group">
+                        <input type="number" 
+                               name="{{ form.altura.name }}" 
+                               id="{{ form.altura.id_for_label }}"
+                               class="form-control {% if form.altura.errors %}is-invalid{% endif %}" 
+                               placeholder="Ejemplo: 15.5"
+                               value="{{ form.altura.value|default:'' }}"
+                               step="0.01"
+                               min="0"
+                               required>
+                        <span class="input-group-text bg-success text-white">
+                            <i class="bi bi-rulers me-1"></i> cm
+                        </span>
+                    </div>
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Altura de la planta medida en centímetros (acepta decimales, ejemplo: 15.5)
+                    </div>
+                    {% if form.altura.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.altura.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Errores No de Campo -->
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Botones de Acción -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-5">
+                    <a href="{% url 'medicion_listar' %}" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-arrow-left-circle-fill me-2"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-save-fill me-2"></i> 
+                        {% if accion == 'Registrar' %}Registrar Medición{% else %}Guardar Cambios{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Información Adicional -->
+        <div class="card mt-4 border-success info-card">
             <div class="card-body">
-                <form method="post" novalidate>
-                    {% csrf_token %}
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.estudiante.id_for_label }}" class="form-label">
-                            {{ form.estudiante.label }} <span class="text-danger">*</span>
-                        </label>
-                        {{ form.estudiante }}
-                        {% if form.estudiante.errors %}
-                            <div class="text-danger">{{ form.estudiante.errors }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.dia.id_for_label }}" class="form-label">
-                            {{ form.dia.label }} <span class="text-danger">*</span>
-                        </label>
-                        {{ form.dia }}
-                        {% if form.dia.errors %}
-                            <div class="text-danger">{{ form.dia.errors }}</div>
-                        {% endif %}
-                        <small class="form-text text-muted">Ejemplo: Día 1, Día 2, Día 3...</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.altura.id_for_label }}" class="form-label">
-                            {{ form.altura.label }} <span class="text-danger">*</span>
-                        </label>
-                        {{ form.altura }}
-                        {% if form.altura.errors %}
-                            <div class="text-danger">{{ form.altura.errors }}</div>
-                        {% endif %}
-                        <small class="form-text text-muted">Medición única de la planta del estudiante</small>
-                    </div>
-                    
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{% url 'medicion_listar' %}" class="btn btn-secondary">
-                            <i class="bi bi-x-circle"></i> Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-save"></i> Guardar
-                        </button>
-                    </div>
-                </form>
+                <h6 class="text-success">
+                    <i class="bi bi-lightbulb-fill me-2"></i> Consejos para la medición:
+                </h6>
+                <ul class="mb-0 small">
+                    <li>Utiliza una regla o cinta métrica para medir la altura desde la base hasta la punta más alta</li>
+                    <li>Registra la medición en centímetros (puedes usar decimales para mayor precisión)</li>
+                    <li>Realiza las mediciones a la misma hora cada día para mantener consistencia</li>
+                    <li>Un estudiante solo puede tener una medición por día</li>
+                    <li>Asegúrate de seleccionar el estudiante correcto antes de guardar</li>
+                </ul>
             </div>
         </div>
     </div>

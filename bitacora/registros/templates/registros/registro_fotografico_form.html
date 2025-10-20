@@ -1,58 +1,168 @@
 {% extends 'registros/base.html' %}
 
-{% block title %}{{ accion }} Registro Fotográfico{% endblock %}
+{% block title %}{{ accion }} Registro Fotográfico - Bitácora Científica{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}"><i class="bi bi-house-fill"></i> Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'registro_fotografico_listar' %}">Fotografías</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-info text-white">
-                <h4 class="mb-0"><i class="bi bi-camera"></i> {{ accion }} Registro Fotográfico</h4>
+    <div class="col-lg-8 col-md-10">
+        <!-- Card del Formulario -->
+        <div class="form-container">
+            <!-- Encabezado -->
+            <div class="text-center mb-4">
+                <div class="mb-3">
+                    <i class="bi {% if accion == 'Registrar' %}bi-camera-fill{% else %}bi-pencil-square{% endif %} text-info" style="font-size: 3rem;"></i>
+                </div>
+                <h2 class="fw-bold">
+                    {% if accion == 'Registrar' %}
+                        <i class="bi bi-plus-circle-fill text-info me-2"></i> Subir Nuevo Registro Fotográfico
+                    {% else %}
+                        <i class="bi bi-pencil-fill text-warning me-2"></i> Editar Registro Fotográfico
+                    {% endif %}
+                </h2>
+                <p class="text-muted">Documenta visualmente el progreso del experimento</p>
             </div>
+
+            <!-- Formulario -->
+            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <!-- Campo: Estudiante -->
+                <div class="mb-4">
+                    <label for="{{ form.estudiante.id_for_label }}" class="form-label">
+                        <i class="bi bi-person-fill text-info me-2"></i>
+                        {{ form.estudiante.label }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <select name="{{ form.estudiante.name }}" 
+                            id="{{ form.estudiante.id_for_label }}"
+                            class="form-select {% if form.estudiante.errors %}is-invalid{% endif %}" 
+                            required>
+                        <option value="">-- Selecciona un estudiante --</option>
+                        {% for choice in form.estudiante.field.queryset %}
+                            <option value="{{ choice.pk }}" {% if form.estudiante.value == choice.pk %}selected{% endif %}>
+                                {{ choice.nombre }} - Grupo {{ choice.grupo }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Selecciona el estudiante al que corresponde esta fotografía
+                    </div>
+                    {% if form.estudiante.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.estudiante.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo: Imagen -->
+                <div class="mb-4">
+                    <label for="{{ form.imagen.id_for_label }}" class="form-label">
+                        <i class="bi bi-image-fill text-info me-2"></i>
+                        {{ form.imagen.label }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="file" 
+                           name="{{ form.imagen.name }}" 
+                           id="{{ form.imagen.id_for_label }}"
+                           class="form-control {% if form.imagen.errors %}is-invalid{% endif %}" 
+                           accept="image/*"
+                           required>
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Formatos permitidos: JPG, PNG, GIF (máximo 5MB)
+                    </div>
+                    {% if form.imagen.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.imagen.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Vista Previa de la Imagen -->
+                <div class="mb-4 text-center">
+                    <img id="imagePreview" src="#" alt="Vista previa" class="img-fluid rounded shadow">
+                </div>
+
+                <!-- Campo: Comentario -->
+                <div class="mb-4">
+                    <label for="{{ form.comentario.id_for_label }}" class="form-label">
+                        <i class="bi bi-chat-left-text-fill text-info me-2"></i>
+                        {{ form.comentario.label }}
+                        <span class="text-muted">(Opcional)</span>
+                    </label>
+                    <textarea name="{{ form.comentario.name }}" 
+                              id="{{ form.comentario.id_for_label }}"
+                              class="form-control {% if form.comentario.errors %}is-invalid{% endif %}" 
+                              rows="5"
+                              placeholder="Describe lo que se observa en la fotografía: estado de la planta, color de las hojas, altura aproximada, condiciones especiales, etc.">{{ form.comentario.value|default:'' }}</textarea>
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Agrega observaciones o comentarios sobre la fotografía (opcional pero recomendado)
+                    </div>
+                    {% if form.comentario.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.comentario.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Errores No de Campo -->
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Botones de Acción -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-5">
+                    <a href="{% url 'registro_fotografico_listar' %}" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-arrow-left-circle-fill me-2"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-info btn-lg text-dark">
+                        <i class="bi bi-cloud-upload-fill me-2"></i> 
+                        {% if accion == 'Registrar' %}Subir Fotografía{% else %}Guardar Cambios{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Información Adicional -->
+        <div class="card mt-4 border-info info-card">
             <div class="card-body">
-                <form method="post" enctype="multipart/form-data" novalidate>
-                    {% csrf_token %}
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.estudiante.id_for_label }}" class="form-label">
-                            {{ form.estudiante.label }} <span class="text-danger">*</span>
-                        </label>
-                        {{ form.estudiante }}
-                        {% if form.estudiante.errors %}
-                            <div class="text-danger">{{ form.estudiante.errors }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.imagen.id_for_label }}" class="form-label">
-                            {{ form.imagen.label }} <span class="text-danger">*</span>
-                        </label>
-                        {{ form.imagen }}
-                        {% if form.imagen.errors %}
-                            <div class="text-danger">{{ form.imagen.errors }}</div>
-                        {% endif %}
-                        <small class="form-text text-muted">Formatos permitidos: JPG, PNG, GIF</small>
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.comentario.id_for_label }}" class="form-label">
-                            {{ form.comentario.label }}
-                        </label>
-                        {{ form.comentario }}
-                        {% if form.comentario.errors %}
-                            <div class="text-danger">{{ form.comentario.errors }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{% url 'registro_fotografico_listar' %}" class="btn btn-secondary">
-                            <i class="bi bi-x-circle"></i> Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-info">
-                            <i class="bi bi-save"></i> Guardar
-                        </button>
-                    </div>
-                </form>
+                <h6 class="text-info">
+                    <i class="bi bi-lightbulb-fill me-2"></i> Consejos para fotografías de calidad:
+                </h6>
+                <ul class="mb-0 small">
+                    <li>Toma las fotografías con buena iluminación natural</li>
+                    <li>Incluye una referencia de tamaño (regla) en la imagen si es posible</li>
+                    <li>Enfoca bien la planta completa desde la base hasta la punta</li>
+                    <li>Mantén un fondo neutro para mejor visualización</li>
+                    <li>Agrega comentarios descriptivos sobre el estado de la planta</li>
+                    <li>Formatos recomendados: JPG o PNG</li>
+                    <li>Tamaño máximo de archivo: 5MB</li>
+                </ul>
             </div>
         </div>
     </div>

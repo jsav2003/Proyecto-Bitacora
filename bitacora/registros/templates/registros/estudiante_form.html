@@ -1,57 +1,159 @@
 {% extends 'registros/base.html' %}
 
-{% block title %}{{ accion }} Estudiante{% endblock %}
+{% block title %}{{ accion }} Estudiante - Bitácora Científica{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}"><i class="bi bi-house-fill"></i> Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'estudiante_listar' %}">Estudiantes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header bg-primary text-white">
-                <h4 class="mb-0"><i class="bi bi-person-plus"></i> {{ accion }} Estudiante</h4>
+    <div class="col-lg-8 col-md-10">
+        <!-- Card del Formulario -->
+        <div class="form-container">
+            <!-- Encabezado -->
+            <div class="text-center mb-4">
+                <div class="mb-3">
+                    <i class="bi {% if accion == 'Registrar' %}bi-person-plus-fill{% else %}bi-person-fill-gear{% endif %} text-primary" style="font-size: 3rem;"></i>
+                </div>
+                <h2 class="fw-bold">
+                    {% if accion == 'Registrar' %}
+                        <i class="bi bi-plus-circle-fill text-primary me-2"></i> Registrar Nuevo Estudiante
+                    {% else %}
+                        <i class="bi bi-pencil-fill text-warning me-2"></i> Editar Estudiante
+                    {% endif %}
+                </h2>
+                <p class="text-muted">Completa todos los campos requeridos para {{ accion|lower }} al estudiante</p>
             </div>
+
+            <!-- Formulario -->
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <!-- Campo: Nombre -->
+                <div class="mb-4">
+                    <label for="{{ form.nombre.id_for_label }}" class="form-label">
+                        <i class="bi bi-person-fill text-primary me-2"></i>
+                        {{ form.nombre.label }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" 
+                           name="{{ form.nombre.name }}" 
+                           id="{{ form.nombre.id_for_label }}"
+                           class="form-control {% if form.nombre.errors %}is-invalid{% endif %}" 
+                           placeholder="Ejemplo: Juan Pérez García"
+                           value="{{ form.nombre.value|default:'' }}"
+                           required>
+                    {% if form.nombre.help_text %}
+                        <div class="form-text">{{ form.nombre.help_text }}</div>
+                    {% endif %}
+                    {% if form.nombre.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.nombre.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo: Correo Institucional -->
+                <div class="mb-4">
+                    <label for="{{ form.correo_institucional.id_for_label }}" class="form-label">
+                        <i class="bi bi-envelope-fill text-primary me-2"></i>
+                        {{ form.correo_institucional.label }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="email" 
+                           name="{{ form.correo_institucional.name }}" 
+                           id="{{ form.correo_institucional.id_for_label }}"
+                           class="form-control {% if form.correo_institucional.errors %}is-invalid{% endif %}" 
+                           placeholder="ejemplo@institucion.edu.co"
+                           value="{{ form.correo_institucional.value|default:'' }}"
+                           required>
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Utiliza el correo electrónico institucional del estudiante
+                    </div>
+                    {% if form.correo_institucional.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.correo_institucional.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo: Grupo -->
+                <div class="mb-4">
+                    <label for="{{ form.grupo.id_for_label }}" class="form-label">
+                        <i class="bi bi-mortarboard-fill text-primary me-2"></i>
+                        {{ form.grupo.label }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    <input type="number" 
+                           name="{{ form.grupo.name }}" 
+                           id="{{ form.grupo.id_for_label }}"
+                           class="form-control {% if form.grupo.errors %}is-invalid{% endif %}" 
+                           placeholder="Ejemplo: 10, 11, 901, etc."
+                           value="{{ form.grupo.value|default:'' }}"
+                           min="1"
+                           required>
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Número del grupo o grado al que pertenece el estudiante
+                    </div>
+                    {% if form.grupo.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.grupo.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Errores No de Campo -->
+                {% if form.non_field_errors %}
+                <div class="alert alert-danger" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Botones de Acción -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-5">
+                    <a href="{% url 'estudiante_listar' %}" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-arrow-left-circle-fill me-2"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="bi bi-save-fill me-2"></i> 
+                        {% if accion == 'Registrar' %}Registrar Estudiante{% else %}Guardar Cambios{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Información Adicional -->
+        <div class="card mt-4 border-info info-card">
             <div class="card-body">
-                <form method="post" novalidate>
-                    {% csrf_token %}
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.nombre.id_for_label }}" class="form-label">
-                            {{ form.nombre.label }} <span class="text-danger">*</span>
-                        </label>
-                        {{ form.nombre }}
-                        {% if form.nombre.errors %}
-                            <div class="text-danger">{{ form.nombre.errors }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.correo_institucional.id_for_label }}" class="form-label">
-                            {{ form.correo_institucional.label }} <span class="text-danger">*</span>
-                        </label>
-                        {{ form.correo_institucional }}
-                        {% if form.correo_institucional.errors %}
-                            <div class="text-danger">{{ form.correo_institucional.errors }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label for="{{ form.grupo.id_for_label }}" class="form-label">
-                            {{ form.grupo.label }} <span class="text-danger">*</span>
-                        </label>
-                        {{ form.grupo }}
-                        {% if form.grupo.errors %}
-                            <div class="text-danger">{{ form.grupo.errors }}</div>
-                        {% endif %}
-                    </div>
-                    
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{% url 'estudiante_listar' %}" class="btn btn-secondary">
-                            <i class="bi bi-x-circle"></i> Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-save"></i> Guardar
-                        </button>
-                    </div>
-                </form>
+                <h6 class="text-info">
+                    <i class="bi bi-lightbulb-fill me-2"></i> Consejos:
+                </h6>
+                <ul class="mb-0 small">
+                    <li>Asegúrate de que el correo institucional sea único para cada estudiante</li>
+                    <li>El nombre completo debe incluir nombres y apellidos</li>
+                    <li>El grupo debe ser un número positivo</li>
+                    <li>Todos los campos marcados con <span class="text-danger">*</span> son obligatorios</li>
+                </ul>
             </div>
         </div>
     </div>

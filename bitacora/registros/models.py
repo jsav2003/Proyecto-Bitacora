@@ -31,7 +31,7 @@ class MedicionPlantas(models.Model):
     altura = models.DecimalField(
         max_digits=10, 
         decimal_places=2,
-        validators=[MinValueValidator(Decimal('0.01'))],
+        validators=[MinValueValidator(Decimal('0'))],
         verbose_name="Altura de la planta (cm)"
     )
     fecha_registro = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de registro")

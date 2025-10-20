@@ -1,81 +1,184 @@
 {% extends 'registros/base.html' %}
 
-{% block title %}Mediciones Registradas{% endblock %}
+{% block title %}Mediciones de Plantas - Bitácora Científica{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}"><i class="bi bi-house-fill"></i> Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Mediciones</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-bar-chart"></i> Mediciones de Plantas</h2>
-    <a href="{% url 'medicion_crear' %}" class="btn btn-success">
-        <i class="bi bi-plus-circle"></i> Nueva Medición
+<!-- Encabezado -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div>
+        <h2 class="mb-2">
+            <i class="bi bi-bar-chart-fill text-success"></i> Mediciones de Plantas
+        </h2>
+        <p class="text-muted mb-0">
+            <span class="badge badge-count bg-success">{{ mediciones.count }}</span> 
+            medición(es) registrada(s)
+        </p>
+    </div>
+    <a href="{% url 'medicion_crear' %}" class="btn btn-success btn-lg shadow">
+        <i class="bi bi-plus-circle-fill me-2"></i> Nueva Medición
     </a>
 </div>
 
-<div class="card mb-4">
+<!-- Filtro por Estudiante -->
+{% if estudiantes %}
+<div class="card mb-4 shadow-sm">
     <div class="card-body">
-        <form method="get" class="row g-3">
-            <div class="col-md-10">
-                <select name="estudiante" class="form-control">
-                    <option value="">-- Todos los estudiantes --</option>
+        <form method="get" class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label class="form-label mb-0">
+                    <i class="bi bi-funnel-fill me-2"></i> Filtrar por estudiante:
+                </label>
+            </div>
+            <div class="col-md-8">
+                <select name="estudiante" class="form-select">
+                    <option value="">🔍 Todos los estudiantes</option>
                     {% for estudiante in estudiantes %}
                         <option value="{{ estudiante.id }}" 
                                 {% if estudiante.id|stringformat:"s" == estudiante_seleccionado %}selected{% endif %}>
-                            {{ estudiante.nombre }} - Grupo {{ estudiante.grupo }}
+                            👤 {{ estudiante.nombre }} - 📚 Grupo {{ estudiante.grupo }}
                         </option>
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-success w-100">
-                    <i class="bi bi-filter"></i> Filtrar
+            <div class="col-auto">
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-search me-2"></i> Filtrar
                 </button>
+                {% if estudiante_seleccionado %}
+                <a href="{% url 'medicion_listar' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-x-circle me-2"></i> Limpiar
+                </a>
+                {% endif %}
             </div>
         </form>
     </div>
 </div>
+{% endif %}
 
 {% if mediciones %}
-<div class="table-responsive">
-    <table class="table table-striped table-hover">
-        <thead class="table-success">
+<!-- Tabla con DataTables -->
+<div class="table-container">
+    <table class="table table-striped table-hover table-bordered table-datatable" id="medicionesTable">
+        <thead>
             <tr>
-                <th>ID</th>
-                <th>Estudiante</th>
-                <th>Grupo</th>
-                <th>Día</th>
-                <th>Altura (cm)</th>
-                <th>Fecha Registro</th>
-                <th class="text-center">Acciones</th>
+                <th><i class="bi bi-hash"></i> ID</th>
+                <th><i class="bi bi-person-fill"></i> Estudiante</th>
+                <th><i class="bi bi-bookmark-fill"></i> Grupo</th>
+                <th><i class="bi bi-calendar-day-fill"></i> Día</th>
+                <th><i class="bi bi-rulers"></i> Altura (cm)</th>
+                <th><i class="bi bi-clock-fill"></i> Fecha Registro</th>
+                <th class="text-center"><i class="bi bi-gear-fill"></i> Acciones</th>
             </tr>
         </thead>
         <tbody>
             {% for medicion in mediciones %}
             <tr>
-                <td>{{ medicion.id }}</td>
-                <td>{{ medicion.estudiante.nombre }}</td>
-                <td><span class="badge bg-info">Grupo {{ medicion.estudiante.grupo }}</span></td>
-                <td><span class="badge bg-primary">Día {{ medicion.dia }}</span></td>
-                <td><strong>{{ medicion.altura }} cm</strong></td>
-                <td>{{ medicion.fecha_registro|date:"d/m/Y H:i" }}</td>
+                <td class="fw-bold">{{ medicion.id }}</td>
+                <td>
+                    <i class="bi bi-person-circle text-success me-2"></i>
+                    {{ medicion.estudiante.nombre }}
+                </td>
+                <td>
+                    <span class="badge bg-info text-dark">
+                        <i class="bi bi-mortarboard-fill me-1"></i> Grupo {{ medicion.estudiante.grupo }}
+                    </span>
+                </td>
+                <td>
+                    <span class="badge bg-primary">
+                        <i class="bi bi-calendar3 me-1"></i> Día {{ medicion.dia }}
+                    </span>
+                </td>
+                <td>
+                    <strong class="text-success fs-5">{{ medicion.altura }}</strong> cm
+                </td>
+                <td>
+                    <i class="bi bi-clock text-muted me-1"></i>
+                    {{ medicion.fecha_registro|date:"d/m/Y H:i" }}
+                </td>
                 <td class="text-center">
-                    <a href="{% url 'medicion_editar' medicion.pk %}" 
-                       class="btn btn-sm btn-warning" title="Editar">
-                        <i class="bi bi-pencil"></i>
-                    </a>
-                    <a href="{% url 'medicion_eliminar' medicion.pk %}" 
-                       class="btn btn-sm btn-danger" title="Eliminar">
-                        <i class="bi bi-trash"></i>
-                    </a>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'medicion_editar' medicion.pk %}" 
+                           class="btn btn-sm btn-warning btn-action" 
+                           data-bs-toggle="tooltip" 
+                           data-bs-placement="top" 
+                           title="Editar medición">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+                        <a href="{% url 'medicion_eliminar' medicion.pk %}" 
+                           class="btn btn-sm btn-danger btn-action btn-delete" 
+                           data-bs-toggle="tooltip" 
+                           data-bs-placement="top" 
+                           title="Eliminar medición"
+                           data-name="Medición día {{ medicion.dia }} - {{ medicion.estudiante.nombre }}">
+                            <i class="bi bi-trash-fill"></i>
+                        </a>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-<p class="text-muted">Total: {{ mediciones|length }} medición(es)</p>
+
+<!-- Estadísticas Rápidas -->
+<div class="row mt-4">
+    <div class="col-md-4 mb-3">
+        <div class="card border-success text-center">
+            <div class="card-body">
+                <i class="bi bi-graph-up-arrow fs-1 text-success"></i>
+                <h5 class="mt-2">Progreso del Experimento</h5>
+                <p class="text-muted">Seguimiento diario del crecimiento</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card border-primary text-center">
+            <div class="card-body">
+                <i class="bi bi-people-fill fs-1 text-primary"></i>
+                <h5 class="mt-2">Estudiantes</h5>
+                <p class="text-muted">Gestionar participantes</p>
+                <a href="{% url 'estudiante_listar' %}" class="btn btn-sm btn-outline-primary mt-2">
+                    Ver Estudiantes
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card border-info text-center">
+            <div class="card-body">
+                <i class="bi bi-camera-fill fs-1 text-info"></i>
+                <h5 class="mt-2">Fotografías</h5>
+                <p class="text-muted">Evidencia visual del experimento</p>
+                <a href="{% url 'registro_fotografico_listar' %}" class="btn btn-sm btn-outline-info mt-2">
+                    Ver Fotografías
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% else %}
-<div class="alert alert-info">
-    <i class="bi bi-info-circle"></i> No hay mediciones registradas.
-    <a href="{% url 'medicion_crear' %}">Registra la primera aquí</a>.
+<!-- Estado Vacío -->
+<div class="empty-state">
+    <i class="bi bi-bar-chart-line"></i>
+    <h3>No hay mediciones registradas</h3>
+    <p class="text-muted mb-4">Comienza a registrar las mediciones diarias de tus plantas</p>
+    <a href="{% url 'medicion_crear' %}" class="btn btn-success btn-lg">
+        <i class="bi bi-plus-circle-fill me-2"></i> Registrar Primera Medición
+    </a>
 </div>
 {% endif %}
 {% endblock %}

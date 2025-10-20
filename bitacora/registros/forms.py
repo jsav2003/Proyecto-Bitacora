@@ -40,7 +40,7 @@ class MedicionPlantasForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Altura de la planta en cm',
                 'step': '0.01',
-                'min': '0.01'
+                'min': '0'
             }),
         }
 

@@ -1,34 +1,72 @@
 {% extends 'registros/base.html' %}
 
-{% block title %}Eliminar Medición{% endblock %}
+{% block title %}Eliminar Medición - Bitácora Científica{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}"><i class="bi bi-house-fill"></i> Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'medicion_listar' %}">Mediciones</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Eliminar</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card border-danger">
-            <div class="card-header bg-danger text-white">
-                <h4 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación</h4>
+    <div class="col-lg-6 col-md-8">
+        <div class="delete-confirmation">
+            <!-- Ícono de Advertencia -->
+            <div class="text-center">
+                <div class="warning-icon pulse-animation">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                </div>
+                <h2 class="fw-bold text-danger mb-3">¿Confirmar Eliminación?</h2>
             </div>
-            <div class="card-body">
-                <p>¿Estás seguro de que deseas eliminar esta medición?</p>
-                <ul>
-                    <li><strong>Estudiante:</strong> {{ medicion.estudiante.nombre }}</li>
-                    <li><strong>Día:</strong> {{ medicion.dia }}</li>
-                    <li><strong>Fecha de registro:</strong> {{ medicion.fecha_registro|date:"d/m/Y H:i" }}</li>
-                </ul>
-                
-                <form method="post">
-                    {% csrf_token %}
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <a href="{% url 'medicion_listar' %}" class="btn btn-secondary">
-                            <i class="bi bi-x-circle"></i> Cancelar
-                        </a>
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-trash"></i> Sí, Eliminar
-                        </button>
-                    </div>
-                </form>
+
+            <!-- Información del Registro -->
+            <div class="alert alert-danger mb-4" role="alert">
+                <h5 class="alert-heading">
+                    <i class="bi bi-bar-chart-fill me-2"></i>
+                    Medición a eliminar:
+                </h5>
+                <hr>
+                <p class="mb-2">
+                    <strong><i class="bi bi-person-fill me-2"></i>Estudiante:</strong> {{ medicion.estudiante.nombre }}
+                </p>
+                <p class="mb-2">
+                    <strong><i class="bi bi-calendar-day-fill me-2"></i>Día:</strong> {{ medicion.dia }}
+                </p>
+                <p class="mb-2">
+                    <strong><i class="bi bi-rulers me-2"></i>Altura:</strong> {{ medicion.altura }} cm
+                </p>
+                <p class="mb-0">
+                    <strong><i class="bi bi-clock-fill me-2"></i>Fecha de registro:</strong> {{ medicion.fecha_registro|date:"d/m/Y H:i" }}
+                </p>
             </div>
+
+            <!-- Advertencia -->
+            <div class="alert alert-warning" role="alert">
+                <p class="mb-0">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>
+                    <strong>Esta acción es irreversible.</strong> La medición será eliminada permanentemente de la base de datos.
+                </p>
+            </div>
+
+            <!-- Formulario -->
+            <form method="post">
+                {% csrf_token %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-between mt-4">
+                    <a href="{% url 'medicion_listar' %}" class="btn btn-secondary btn-lg">
+                        <i class="bi bi-arrow-left-circle-fill me-2"></i> No, Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-danger btn-lg">
+                        <i class="bi bi-trash-fill me-2"></i> Sí, Eliminar Permanentemente
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>

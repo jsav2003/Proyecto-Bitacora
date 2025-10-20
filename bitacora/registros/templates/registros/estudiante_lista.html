@@ -1,71 +1,144 @@
 {% extends 'registros/base.html' %}
 
-{% block title %}Estudiantes Registrados{% endblock %}
+{% block title %}Estudiantes Registrados - Bitácora Científica{% endblock %}
+
+{% block breadcrumb %}
+<div class="container mt-3">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'index' %}"><i class="bi bi-house-fill"></i> Inicio</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Estudiantes</li>
+        </ol>
+    </nav>
+</div>
+{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-people"></i> Estudiantes Registrados</h2>
-    <a href="{% url 'estudiante_crear' %}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Nuevo Estudiante
+<!-- Encabezado -->
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div>
+        <h2 class="mb-2">
+            <i class="bi bi-people-fill text-primary"></i> Estudiantes Registrados
+        </h2>
+        <p class="text-muted mb-0">
+            <span class="badge badge-count bg-primary">{{ estudiantes.count }}</span> 
+            estudiante(s) registrado(s)
+        </p>
+    </div>
+    <a href="{% url 'estudiante_crear' %}" class="btn btn-success btn-lg shadow">
+        <i class="bi bi-plus-circle-fill me-2"></i> Nuevo Estudiante
     </a>
 </div>
 
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="get" class="row g-3">
-            <div class="col-md-10">
-                <input type="text" name="buscar" class="form-control" 
-                       placeholder="Buscar por nombre, correo o grupo..." 
-                       value="{{ busqueda }}">
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-success w-100">
-                    <i class="bi bi-search"></i> Buscar
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
 {% if estudiantes %}
-<div class="table-responsive">
-    <table class="table table-striped table-hover">
-        <thead class="table-primary">
+<!-- Tabla con DataTables -->
+<div class="table-container">
+    <table class="table table-striped table-hover table-bordered table-datatable" id="estudiantesTable">
+        <thead>
             <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Correo Institucional</th>
-                <th>Grupo</th>
-                <th class="text-center">Acciones</th>
+                <th><i class="bi bi-hash"></i> ID</th>
+                <th><i class="bi bi-person-fill"></i> Nombre Completo</th>
+                <th><i class="bi bi-envelope-fill"></i> Correo Institucional</th>
+                <th><i class="bi bi-bookmark-fill"></i> Grupo</th>
+                <th class="text-center"><i class="bi bi-gear-fill"></i> Acciones</th>
             </tr>
         </thead>
         <tbody>
             {% for estudiante in estudiantes %}
             <tr>
-                <td>{{ estudiante.id }}</td>
-                <td>{{ estudiante.nombre }}</td>
-                <td>{{ estudiante.correo_institucional }}</td>
-                <td><span class="badge bg-info">Grupo {{ estudiante.grupo }}</span></td>
+                <td class="fw-bold">{{ estudiante.id }}</td>
+                <td>
+                    <i class="bi bi-person-circle text-primary me-2"></i>
+                    {{ estudiante.nombre }}
+                </td>
+                <td>
+                    <a href="mailto:{{ estudiante.correo_institucional }}" class="text-decoration-none">
+                        {{ estudiante.correo_institucional }}
+                    </a>
+                </td>
+                <td>
+                    <span class="badge bg-info text-dark">
+                        <i class="bi bi-mortarboard-fill me-1"></i> Grupo {{ estudiante.grupo }}
+                    </span>
+                </td>
                 <td class="text-center">
-                    <a href="{% url 'estudiante_editar' estudiante.pk %}" 
-                       class="btn btn-sm btn-warning" title="Editar">
-                        <i class="bi bi-pencil"></i>
-                    </a>
-                    <a href="{% url 'estudiante_eliminar' estudiante.pk %}" 
-                       class="btn btn-sm btn-danger" title="Eliminar">
-                        <i class="bi bi-trash"></i>
-                    </a>
+                    <div class="btn-group" role="group">
+                        <a href="{% url 'estudiante_editar' estudiante.pk %}" 
+                           class="btn btn-sm btn-warning btn-action" 
+                           data-bs-toggle="tooltip" 
+                           data-bs-placement="top" 
+                           title="Editar estudiante">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+                        <a href="{% url 'estudiante_eliminar' estudiante.pk %}" 
+                           class="btn btn-sm btn-danger btn-action btn-delete" 
+                           data-bs-toggle="tooltip" 
+                           data-bs-placement="top" 
+                           title="Eliminar estudiante"
+                           data-name="{{ estudiante.nombre }}">
+                            <i class="bi bi-trash-fill"></i>
+                        </a>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-<p class="text-muted">Total: {{ estudiantes|length }} estudiante(s)</p>
+
 {% else %}
-<div class="alert alert-info">
-    <i class="bi bi-info-circle"></i> No hay estudiantes registrados.
-    <a href="{% url 'estudiante_crear' %}">Registra el primero aquí</a>.
+<!-- Estado Vacío -->
+<div class="empty-state">
+    <i class="bi bi-people"></i>
+    <h3>No hay estudiantes registrados</h3>
+    <p class="text-muted mb-4">Comienza registrando el primer estudiante para tu experimento</p>
+    <a href="{% url 'estudiante_crear' %}" class="btn btn-primary btn-lg">
+        <i class="bi bi-plus-circle-fill me-2"></i> Registrar Primer Estudiante
+    </a>
+</div>
+{% endif %}
+
+<!-- Información adicional -->
+{% if estudiantes %}
+<div class="row mt-4">
+    <div class="col-md-4 mb-3">
+        <div class="card border-primary">
+            <div class="card-body text-center">
+                <i class="bi bi-bar-chart-fill fs-1 text-primary"></i>
+                <h5 class="mt-2">Mediciones</h5>
+                <p class="text-muted mb-0">Registra mediciones de plantas</p>
+                <a href="{% url 'medicion_crear' %}" class="btn btn-sm btn-outline-primary mt-2">
+                    Ir a Mediciones
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <i class="bi bi-camera-fill fs-1 text-success"></i>
+                <h5 class="mt-2">Fotografías</h5>
+                <p class="text-muted mb-0">Registra evidencia fotográfica</p>
+                <a href="{% url 'registro_fotografico_crear' %}" class="btn btn-sm btn-outline-success mt-2">
+                    Ir a Fotografías
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <div class="card border-info">
+            <div class="card-body text-center">
+                <i class="bi bi-house-fill fs-1 text-info"></i>
+                <h5 class="mt-2">Dashboard</h5>
+                <p class="text-muted mb-0">Volver al panel principal</p>
+                <a href="{% url 'index' %}" class="btn btn-sm btn-outline-info mt-2">
+                    Ir al Inicio
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 {% endif %}
 {% endblock %}
