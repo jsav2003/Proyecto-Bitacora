@@ -35,7 +35,7 @@
             </div>
 
             <!-- Formulario -->
-            <form method="post" class="needs-validation" novalidate>
+            <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
                 {% csrf_token %}
                 
                 <!-- Campo: Estudiante -->
@@ -131,6 +131,72 @@
                     {% endif %}
                 </div>
 
+                <!-- Campo: Fotografía -->
+                <div class="mb-4">
+                    <label for="{{ form.imagen.id_for_label }}" class="form-label">
+                        <i class="bi bi-camera-fill text-success me-2"></i>
+                        {{ form.imagen.label }}
+                    </label>
+                    <input type="file" 
+                           name="{{ form.imagen.name }}" 
+                           id="{{ form.imagen.id_for_label }}"
+                           class="form-control {% if form.imagen.errors %}is-invalid{% endif %}" 
+                           accept="image/*">
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Sube una fotografía de la planta (JPG, PNG, GIF - máximo 5MB)
+                    </div>
+                    {% if form.imagen.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.imagen.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Preview de la imagen -->
+                    <div class="mt-3 text-center">
+                        {% if registro_foto and registro_foto.imagen %}
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-image-fill me-1"></i> Fotografía actual:
+                            </p>
+                            <img src="{{ registro_foto.imagen.url }}" 
+                                 alt="Fotografía actual" 
+                                 class="img-thumbnail show"
+                                 id="imagePreview"
+                                 style="max-width: 300px; max-height: 300px; display: block; margin: 0 auto;">
+                        {% else %}
+                            <img id="imagePreview" 
+                                 class="img-thumbnail" 
+                                 style="max-width: 300px; max-height: 300px; display: none; margin: 0 auto;">
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Campo: Comentario -->
+                <div class="mb-4">
+                    <label for="{{ form.comentario.id_for_label }}" class="form-label">
+                        <i class="bi bi-chat-left-text-fill text-success me-2"></i>
+                        {{ form.comentario.label }}
+                    </label>
+                    <textarea name="comentario" 
+                              id="id_comentario" 
+                              class="form-control" 
+                              placeholder="Observaciones y comentarios sobre la fotografía" 
+                              rows="4">{% if form.comentario.value %}{{ form.comentario.value }}{% elif form.inicial.comentario %}{{ form.inicial.comentario }}{% elif registro_foto %}{{ registro_foto.comentario }}{% endif %}</textarea>
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Agrega observaciones o comentarios sobre la fotografía (opcional)
+                    </div>
+                    {% if form.comentario.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.comentario.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
                 <!-- Errores No de Campo -->
                 {% if form.non_field_errors %}
                 <div class="alert alert-danger" role="alert">
@@ -158,13 +224,14 @@
         <div class="card mt-4 border-success info-card">
             <div class="card-body">
                 <h6 class="text-success">
-                    <i class="bi bi-lightbulb-fill me-2"></i> Consejos para la medición:
+                    <i class="bi bi-lightbulb-fill me-2"></i> Consejos para el registro:
                 </h6>
                 <ul class="mb-0 small">
                     <li>Utiliza una regla o cinta métrica para medir la altura desde la base hasta la punta más alta</li>
                     <li>Registra la medición en centímetros (puedes usar decimales para mayor precisión)</li>
                     <li>Realiza las mediciones a la misma hora cada día para mantener consistencia</li>
                     <li>Un estudiante solo puede tener una medición por día</li>
+                    <li>La fotografía es opcional, pero muy recomendada para documentar visualmente el crecimiento</li>
                     <li>Asegúrate de seleccionar el estudiante correcto antes de guardar</li>
                 </ul>
             </div>

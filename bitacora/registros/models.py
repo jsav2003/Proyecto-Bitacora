@@ -47,6 +47,15 @@ class MedicionPlantas(models.Model):
 
 
 class RegistroFotografico(models.Model):
+    medicion = models.OneToOneField(
+        MedicionPlantas,
+        on_delete=models.CASCADE,
+        related_name='foto',
+        verbose_name="Medición asociada",
+        null=True,
+        blank=True
+    )
+    # Mantener estudiante por compatibilidad con datos existentes
     estudiante = models.ForeignKey(
         Estudiante, 
         on_delete=models.CASCADE, 

@@ -1,5 +1,78 @@
 from django import forms
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.models import User
 from .models import Estudiante, MedicionPlantas, RegistroFotografico
+
+
+# ===== FORMULARIOS DE AUTENTICACIÓN =====
+
+class RegistroForm(UserCreationForm):
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'correo@ejemplo.com'
+        })
+    )
+    first_name = forms.CharField(
+        max_length=30,
+        required=True,
+        label='Nombre',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Tu nombre'
+        })
+    )
+    last_name = forms.CharField(
+        max_length=30,
+        required=True,
+        label='Apellido',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Tu apellido'
+        })
+    )
+    
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+        widgets = {
+            'username': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nombre de usuario'
+            })
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Contraseña'
+        })
+        self.fields['password2'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Confirmar contraseña'
+        })
+
+
+class LoginForm(AuthenticationForm):
+    username = forms.CharField(
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Nombre de usuario',
+            'autofocus': True
+        })
+    )
+    password = forms.CharField(
+        label='Contraseña',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Contraseña'
+        })
+    )
+
+
+# ===== FORMULARIOS EXISTENTES =====
 
 
 class EstudianteForm(forms.ModelForm):
@@ -24,6 +97,25 @@ class EstudianteForm(forms.ModelForm):
 
 
 class MedicionPlantasForm(forms.ModelForm):
+    # Campos adicionales para el registro fotográfico
+    imagen = forms.ImageField(
+        required=False,
+        widget=forms.FileInput(attrs={
+            'class': 'form-control',
+            'accept': 'image/*'
+        }),
+        label='Fotografía (opcional)'
+    )
+    comentario = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Observaciones y comentarios sobre la fotografía',
+            'rows': 4
+        }),
+        label='Comentario (opcional)'
+    )
+    
     class Meta:
         model = MedicionPlantas
         fields = ['estudiante', 'dia', 'altura']

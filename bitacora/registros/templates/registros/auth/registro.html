@@ -1,0 +1,156 @@
+{% extends 'registros/base.html' %}
+
+{% block title %}Registro - Bitácora Científica{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <!-- Card de Registro -->
+        <div class="form-container">
+            <!-- Encabezado -->
+            <div class="text-center mb-4">
+                <div class="mb-3">
+                    <i class="bi bi-person-plus-fill text-success" style="font-size: 4rem;"></i>
+                </div>
+                <h2 class="fw-bold">
+                    <i class="bi bi-clipboard-check text-success me-2"></i> Crear Cuenta
+                </h2>
+                <p class="text-muted">Regístrate para acceder a la bitácora científica</p>
+            </div>
+
+            <!-- Formulario de Registro -->
+            <form method="post">
+                {% csrf_token %}
+                
+                <!-- Campo: Nombre de Usuario -->
+                <div class="mb-3">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">
+                        <i class="bi bi-person-badge text-success me-2"></i>
+                        {{ form.username.label }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{ form.username }}
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Letras, números y @/./+/-/_ únicamente
+                    </div>
+                    {% if form.username.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.username.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Fila: Nombre y Apellido -->
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                            <i class="bi bi-person text-success me-2"></i>
+                            {{ form.first_name.label }}
+                            <span class="text-danger">*</span>
+                        </label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.first_name.errors %}
+                                    <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                            <i class="bi bi-person text-success me-2"></i>
+                            {{ form.last_name.label }}
+                            <span class="text-danger">*</span>
+                        </label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                            <div class="invalid-feedback d-block">
+                                {% for error in form.last_name.errors %}
+                                    <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Campo: Email -->
+                <div class="mb-3">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">
+                        <i class="bi bi-envelope text-success me-2"></i>
+                        {{ form.email.label }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.email.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo: Contraseña -->
+                <div class="mb-3">
+                    <label for="{{ form.password1.id_for_label }}" class="form-label">
+                        <i class="bi bi-lock text-success me-2"></i>
+                        {{ form.password1.label }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{ form.password1 }}
+                    <div class="form-text">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Mínimo 8 caracteres, no solo números
+                    </div>
+                    {% if form.password1.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.password1.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Campo: Confirmar Contraseña -->
+                <div class="mb-4">
+                    <label for="{{ form.password2.id_for_label }}" class="form-label">
+                        <i class="bi bi-lock-fill text-success me-2"></i>
+                        {{ form.password2.label }}
+                        <span class="text-danger">*</span>
+                    </label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                        <div class="invalid-feedback d-block">
+                            {% for error in form.password2.errors %}
+                                <i class="bi bi-exclamation-circle-fill me-1"></i>{{ error }}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Botón de Registro -->
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-success btn-lg">
+                        <i class="bi bi-person-plus-fill me-2"></i> Crear Cuenta
+                    </button>
+                </div>
+
+                <!-- Link a Login -->
+                <div class="text-center">
+                    <p class="text-muted">
+                        ¿Ya tienes cuenta? 
+                        <a href="{% url 'login' %}" class="text-success fw-bold text-decoration-none">
+                            Inicia sesión aquí
+                        </a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

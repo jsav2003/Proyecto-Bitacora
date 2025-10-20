@@ -20,7 +20,7 @@
 
 <!-- Dashboard Cards -->
 <div class="row g-4 mb-5">
-    <div class="col-md-4">
+    <div class="col-md-6">
         <div class="card card-stats border-primary text-center h-100">
             <div class="card-body">
                 <div class="card-icon text-primary">
@@ -40,7 +40,7 @@
         </div>
     </div>
     
-    <div class="col-md-4">
+    <div class="col-md-6">
         <div class="card card-stats border-success text-center h-100">
             <div class="card-body">
                 <div class="card-icon text-success">
@@ -50,29 +50,9 @@
                 <p class="text-muted mb-4">Mediciones Registradas</p>
                 <div class="d-grid gap-2">
                     <a href="{% url 'medicion_crear' %}" class="btn btn-success btn-lg">
-                        <i class="bi bi-plus-circle-fill me-2"></i> Registrar Medición
+                        <i class="bi bi-plus-circle-fill me-2"></i> Nueva Medición + Foto
                     </a>
                     <a href="{% url 'medicion_listar' %}" class="btn btn-outline-success">
-                        <i class="bi bi-list-ul me-2"></i> Ver Todas
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card card-stats border-info text-center h-100">
-            <div class="card-body">
-                <div class="card-icon text-info">
-                    <i class="bi bi-camera-fill"></i>
-                </div>
-                <h3 class="stats-number" data-target="{{ fotos_count }}">0</h3>
-                <p class="text-muted mb-4">Fotografías Registradas</p>
-                <div class="d-grid gap-2">
-                    <a href="{% url 'registro_fotografico_crear' %}" class="btn btn-info btn-lg">
-                        <i class="bi bi-plus-circle-fill me-2"></i> Registrar Foto
-                    </a>
-                    <a href="{% url 'registro_fotografico_listar' %}" class="btn btn-outline-info">
                         <i class="bi bi-list-ul me-2"></i> Ver Todas
                     </a>
                 </div>
@@ -114,10 +94,10 @@
                             </div>
                         </div>
                         <h5 class="text-success">
-                            <i class="bi bi-rulers"></i> Registrar Mediciones
+                            <i class="bi bi-rulers"></i> Registrar Mediciones + Fotos
                         </h5>
                         <p class="text-muted">
-                            Cada día, registra las alturas de las plantas para cada estudiante
+                            Cada día, registra las alturas de las plantas junto con su fotografía
                         </p>
                     </div>
                     
@@ -128,10 +108,10 @@
                             </div>
                         </div>
                         <h5 class="text-info">
-                            <i class="bi bi-camera-fill"></i> Registrar Fotografías
+                            <i class="bi bi-graph-up-arrow"></i> Seguimiento
                         </h5>
                         <p class="text-muted">
-                            Captura y sube fotografías del experimento con comentarios descriptivos
+                            Consulta las mediciones y fotografías para analizar el crecimiento
                         </p>
                     </div>
                 </div>
@@ -149,7 +129,7 @@
         </h3>
     </div>
     
-    <div class="col-md-3 col-sm-6 mb-3">
+    <div class="col-md-4 col-sm-6 mb-3">
         <a href="{% url 'estudiante_listar' %}" class="card card-link text-decoration-none h-100">
             <div class="card-body text-center">
                 <i class="bi bi-people fs-1 text-primary mb-3"></i>
@@ -158,29 +138,20 @@
         </a>
     </div>
     
-    <div class="col-md-3 col-sm-6 mb-3">
+    <div class="col-md-4 col-sm-6 mb-3">
         <a href="{% url 'medicion_listar' %}" class="card card-link text-decoration-none h-100">
             <div class="card-body text-center">
                 <i class="bi bi-graph-up fs-1 text-success mb-3"></i>
-                <h5 class="card-title">Lista de Mediciones</h5>
+                <h5 class="card-title">Mediciones y Fotografías</h5>
             </div>
         </a>
     </div>
     
-    <div class="col-md-3 col-sm-6 mb-3">
-        <a href="{% url 'registro_fotografico_listar' %}" class="card card-link text-decoration-none h-100">
-            <div class="card-body text-center">
-                <i class="bi bi-images fs-1 text-info mb-3"></i>
-                <h5 class="card-title">Galería de Fotos</h5>
-            </div>
-        </a>
-    </div>
-    
-    <div class="col-md-3 col-sm-6 mb-3">
-        <a href="{% url 'estudiante_crear' %}" class="card card-link text-decoration-none h-100">
+    <div class="col-md-4 col-sm-6 mb-3">
+        <a href="{% url 'medicion_crear' %}" class="card card-link text-decoration-none h-100">
             <div class="card-body text-center">
                 <i class="bi bi-plus-circle fs-1 text-warning mb-3"></i>
-                <h5 class="card-title">Agregar Nuevo</h5>
+                <h5 class="card-title">Nuevo Registro</h5>
             </div>
         </a>
     </div>
