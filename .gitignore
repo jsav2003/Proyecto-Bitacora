@@ -13,8 +13,10 @@ __pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
-/media
-/staticfiles
+media/
+*_OLD.html
+*_old.html
+*_backup.html
 
 # Virtual Environment
 envs/
