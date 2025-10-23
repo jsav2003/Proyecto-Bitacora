@@ -1,0 +1,416 @@
+/* ========================================
+   ANÁLISIS DASHBOARD - ESTILOS MEJORADOS
+   Usando Paleta Unificada
+   ======================================== */
+
+/* Importar variables del custom.css */
+:root {
+    --primary-color: #198754;
+    --primary-dark: #146c43;
+    --primary-light: #20c997;
+    --success-color: #198754;
+    --info-color: #17a2b8;
+    --warning-color: #ffc107;
+    --gradient-primary: linear-gradient(135deg, #198754 0%, #20c997 100%);
+    --border-radius: 0.5rem;
+    --transition-speed: 0.3s;
+    --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* ===================================
+   ESPACIADO Y ESTRUCTURA
+   =================================== */
+
+/* Contenedor principal con separación */
+.container {
+    width: 100%;
+    max-width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Espaciado general para todas las cards */
+.card {
+    margin-bottom: 1.5rem;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Espaciado específico para la card de búsqueda/filtros */
+.filter-card {
+    margin-bottom: 3rem !important;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Grid de resultados con separación superior y limpieza de floats */
+.row.g-4 {
+    margin-top: 0 !important;
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 1.5rem;
+}
+
+/* Columnas de las cards con espaciado adicional */
+.row.g-4 > [class*="col-"] {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Formularios */
+.form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, 
+.form-select {
+    border: 2px solid #e9ecef;
+    border-radius: var(--border-radius);
+    transition: all var(--transition-speed) ease;
+}
+
+.form-control:focus, 
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.15);
+}
+
+/* Tarjetas con efecto hover mejorado */
+.hover-card {
+    transition: all var(--transition-speed) ease;
+    border: 1px solid #e9ecef;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.hover-card:hover {
+    box-shadow: var(--shadow-md) !important;
+    border-color: var(--primary-light);
+}
+
+/* Asegurar que el card-body crezca para cards de igual altura */
+.hover-card .card-body {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Cards con altura igual en su fila */
+.row.g-4 > [class*="col-"] > .card {
+    height: 100%;
+}
+
+/* Gradiente para headers */
+.bg-gradient-success {
+    background: var(--gradient-primary);
+}
+
+/* Stat boxes */
+.stat-box {
+    display: flex;
+    align-items: center;
+    padding: 0.875rem;
+    background: #f8f9fa;
+    border-radius: var(--border-radius);
+    min-height: 80px;
+    transition: all var(--transition-speed) ease;
+}
+
+.stat-box:hover {
+    background: #e9ecef;
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--border-radius);
+    color: white;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+    margin-right: 0.875rem;
+}
+
+.stat-info h4 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.375rem;
+    color: #212529;
+}
+
+.stat-info small {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* ===================================
+   RESPONSIVE DESIGN
+   =================================== */
+
+/* Móviles pequeños (< 576px) */
+@media (max-width: 575.98px) {
+    .container {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .filter-card {
+        margin-bottom: 2rem !important;
+    }
+    
+    .row.g-4 {
+        --bs-gutter-x: 1rem;
+        --bs-gutter-y: 1rem;
+    }
+    
+    .stat-box {
+        min-height: 70px;
+        padding: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+        margin-right: 0.5rem;
+    }
+    
+    .stat-info h4 {
+        font-size: 1.4rem;
+    }
+    
+    .stat-info small {
+        font-size: 0.7rem;
+    }
+    
+    /* Encabezado más compacto en móviles */
+    .display-5 {
+        font-size: 1.75rem !important;
+    }
+    
+    .lead {
+        font-size: 1rem !important;
+    }
+    
+    /* Botones en móviles */
+    .btn-lg {
+        padding: 0.65rem 1rem;
+        font-size: 1rem;
+    }
+}
+
+/* Móviles grandes y tablets pequeñas (576px - 768px) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .card {
+        margin-bottom: 1.25rem;
+    }
+    
+    .filter-card {
+        margin-bottom: 2rem !important;
+    }
+    
+    .row.g-4 {
+        --bs-gutter-x: 1.25rem;
+        --bs-gutter-y: 1.25rem;
+    }
+    
+    .stat-box {
+        min-height: 75px;
+    }
+    
+    .stat-info h4 {
+        font-size: 1.6rem;
+    }
+}
+
+/* Tablets (768px - 992px) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .card {
+        margin-bottom: 1.5rem;
+    }
+    
+    .filter-card {
+        margin-bottom: 2rem !important;
+    }
+    
+    .row.g-4 {
+        --bs-gutter-x: 1.5rem;
+        --bs-gutter-y: 1.5rem;
+    }
+}
+
+/* Desktop (≥ 992px) */
+@media (min-width: 992px) {
+    .card {
+        margin-bottom: 2rem;
+    }
+    
+    .filter-card {
+        margin-bottom: 2.5rem !important;
+    }
+    
+    .row.g-4 {
+        --bs-gutter-x: 1.5rem;
+        --bs-gutter-y: 1.5rem;
+    }
+}
+
+/* Desktop grande (≥ 1200px) */
+@media (min-width: 1200px) {
+    .filter-card {
+        margin-bottom: 3rem !important;
+    }
+    
+    .row.g-4 {
+        --bs-gutter-x: 2rem;
+        --bs-gutter-y: 2rem;
+    }
+}
+
+/* ===================================
+   UTILIDADES Y AJUSTES FINALES
+   =================================== */
+
+.min-w-0 {
+    min-width: 0;
+}
+
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Prevenir overflow horizontal */
+.container,
+.row {
+    max-width: 100%;
+}
+
+/* Asegurar que las columnas no se colapsen */
+.col-12, 
+.col-lg-6 {
+    position: relative;
+    min-height: 1px;
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+/* Prevenir overflow en card-body */
+.card-body {
+    max-width: 100%;
+}
+
+/* Prevenir overflow en formularios */
+.form-control,
+.form-select {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Espaciado entre alertas y contenido */
+.alert {
+    margin-bottom: 2rem !important;
+    margin-top: 0 !important;
+}
+
+/* Card header responsive */
+.card-header {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    position: relative;
+    z-index: 1;
+}
+
+/* Asegurar que las badges no rompan el layout */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+
+
+/* Footer del card siempre al final */
+.card-footer {
+    margin-top: auto;
+}
+
+/* Mejorar contraste de iconos */
+.stat-icon i {
+    line-height: 1;
+}
+
+/* Ajuste para textos largos en nombres */
+.card-header h5 {
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+/* Espaciado en sección de estudiantes sin datos */
+#estudiantesSinDatos {
+    margin-top: 3rem !important;
+    clear: both;
+}
+
+/* Ajustes para formularios responsivos */
+@media (max-width: 767.98px) {
+    .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.4rem;
+    }
+    
+    .form-control,
+    .form-select {
+        font-size: 0.95rem;
+        padding: 0.5rem 0.75rem;
+    }
+}
+
+/* Evitar desbordamiento en estadísticas */
+.stat-box .stat-info {
+    overflow: hidden;
+}
+
+.stat-box .stat-info h4 {
+    word-break: break-word;
+}
+
+
+
+/* Asegurar que no haya overlapping */
+* {
+    box-sizing: border-box;
+}
+
+/* Prevenir overflow en las columnas */
+[class*="col-"] {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Asegurar que ningún elemento cause scroll horizontal */
+body {
+    overflow-x: clip;
+    max-width: 100%;
+}
+
+html {
+    overflow-x: clip;
+    max-width: 100%;
+}

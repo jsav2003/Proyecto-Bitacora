@@ -26,4 +26,10 @@ urlpatterns = [
     path('registros-fotograficos/', views.registro_fotografico_listar, name='registro_fotografico_listar'),
     path('registros-fotograficos/crear/', views.registro_fotografico_crear, name='registro_fotografico_crear'),
     path('registros-fotograficos/eliminar/<int:pk>/', views.registro_fotografico_eliminar, name='registro_fotografico_eliminar'),
+    
+    # URLs de Análisis
+    path('analisis/', views.analisis_dashboard, name='analisis_dashboard'),
+    path('analisis/<int:estudiante_id>/', views.analisis_regresion, name='analisis_regresion'),
+    path('exportar-csv/<int:estudiante_id>/', views.exportar_csv, name='exportar_csv'),
 ]
+
