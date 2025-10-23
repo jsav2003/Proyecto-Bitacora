@@ -22,7 +22,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="{% static 'registros/css/custom.css' %}?v=20251020-4">
+    <link rel="stylesheet" href="{% static 'registros/css/custom.css' %}?v=20251023-unificado">
     
     {% block extra_css %}{% endblock %}
 </head>
@@ -55,6 +55,12 @@
                         <a class="nav-link {% if 'medicion' in request.resolver_match.url_name %}active{% endif %}" 
                            href="{% url 'medicion_listar' %}">
                             <i class="bi bi-bar-chart-fill"></i> Mediciones
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if 'analisis' in request.resolver_match.url_name %}active{% endif %}" 
+                           href="{% url 'analisis_dashboard' %}">
+                            <i class="bi bi-graph-up-arrow"></i> Análisis
                         </a>
                     </li>
                     

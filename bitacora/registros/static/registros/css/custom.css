@@ -1,17 +1,41 @@
 /* ========================================
    BITÁCORA CIENTÍFICA - ESTILOS PERSONALIZADOS
+   Paleta de Colores Unificada
    ======================================== */
 
-/* Variables CSS */
+/* Variables CSS - PALETA UNIFICADA */
 :root {
-    --primary-color: #0d6efd;
+    /* Colores Principales - Verde Científico */
+    --primary-color: #198754;
+    --primary-dark: #146c43;
+    --primary-light: #20c997;
+    --primary-lighter: #75f3c5;
+    
+    /* Colores Secundarios */
     --success-color: #198754;
+    --info-color: #17a2b8;
     --warning-color: #ffc107;
     --danger-color: #dc3545;
-    --info-color: #0dcaf0;
+    
+    /* Colores de Estado */
+    --excellent-color: #198754;
+    --good-color: #17a2b8;
+    --moderate-color: #ffc107;
+    --weak-color: #6c757d;
+    
+    /* Fondos y Textos */
     --light-bg: #f8f9fa;
+    --white-bg: #ffffff;
     --dark-text: #212529;
+    --muted-text: #6c757d;
+    
+    /* Gradientes */
+    --gradient-primary: linear-gradient(135deg, #198754 0%, #20c997 100%);
+    --gradient-success: linear-gradient(135deg, #198754 0%, #20c997 100%);
+    
+    /* Bordes y Sombras */
     --border-radius: 0.5rem;
+    --border-radius-lg: 0.75rem;
     --transition-speed: 0.3s;
     --shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     --shadow-md: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
@@ -79,7 +103,7 @@ main {
 
 /* Hero Section */
 .hero-section {
-    background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+    background: var(--gradient-primary);
     color: white;
     padding: 4rem 0;
     border-radius: var(--border-radius);
@@ -160,7 +184,7 @@ main {
     font-size: 3rem;
     font-weight: 700;
     margin: 0.5rem 0;
-    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+    background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -221,7 +245,7 @@ main {
 }
 
 .table thead th {
-    background: linear-gradient(135deg, var(--success-color) 0%, #20c997 100%);
+    background: var(--gradient-success);
     color: white;
     font-weight: 600;
     text-transform: uppercase;
@@ -365,18 +389,22 @@ main {
 
 .alert-success {
     background: linear-gradient(135deg, #d1e7dd 0%, #a3cfbb 100%);
+    border-left: 4px solid var(--success-color);
 }
 
 .alert-danger {
     background: linear-gradient(135deg, #f8d7da 0%, #f1aeb5 100%);
+    border-left: 4px solid var(--danger-color);
 }
 
 .alert-warning {
     background: linear-gradient(135deg, #fff3cd 0%, #ffe69c 100%);
+    border-left: 4px solid var(--warning-color);
 }
 
 .alert-info {
     background: linear-gradient(135deg, #cff4fc 0%, #9eeaf9 100%);
+    border-left: 4px solid var(--info-color);
 }
 
 /* Estado Vacío */
@@ -415,7 +443,7 @@ main {
 
 /* Footer */
 footer {
-    background: linear-gradient(135deg, #198754 0%, #20c997 100%);
+    background: var(--gradient-primary);
     color: white;
     padding: 2rem 0;
     margin-top: 5rem;
@@ -1112,5 +1140,204 @@ html {
     .mediciones-cards-view {
         grid-template-columns: repeat(4, 1fr);
     }
+}
+
+/* ========================================
+   UNIFICACIÓN DE PALETA DE COLORES
+   Todos los elementos usan la paleta verde
+   ======================================== */
+
+/* Sobrescribir colores primarios de Bootstrap con verde */
+.btn-primary {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: var(--primary-dark) !important;
+    border-color: var(--primary-dark) !important;
+}
+
+.btn-outline-primary {
+    color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Badges unificados */
+.badge.bg-primary {
+    background: var(--primary-color) !important;
+}
+
+/* Text colors unificados */
+.text-primary {
+    color: var(--primary-color) !important;
+}
+
+/* Border colors unificados */
+.border-primary {
+    border-color: var(--primary-color) !important;
+}
+
+/* Links */
+a {
+    color: var(--primary-color);
+    transition: all var(--transition-speed);
+}
+
+a:hover {
+    color: var(--primary-dark);
+}
+
+/* Focus states unificados */
+.form-control:focus,
+.form-select:focus,
+input:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 0.25rem rgba(25, 135, 84, 0.15) !important;
+}
+
+/* Checkboxes y radios */
+.form-check-input:checked {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Progress bars */
+.progress-bar {
+    background-color: var(--primary-color) !important;
+}
+
+/* Active states en navegación */
+.nav-link.active,
+.navbar-nav .nav-link.active {
+    color: var(--primary-lighter) !important;
+}
+
+/* Pagination */
+.page-item.active .page-link {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.page-link {
+    color: var(--primary-color) !important;
+}
+
+.page-link:hover {
+    color: var(--primary-dark) !important;
+    background: rgba(25, 135, 84, 0.1) !important;
+}
+
+/* Spinner/Loading */
+.spinner-border {
+    color: var(--primary-color) !important;
+}
+
+/* Dropdowns */
+.dropdown-item.active,
+.dropdown-item:active {
+    background-color: var(--primary-color) !important;
+}
+
+/* List groups */
+.list-group-item.active {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+/* Cards activas */
+.card.border-primary {
+    border-color: var(--primary-color) !important;
+}
+
+.card-header.bg-primary {
+    background: var(--gradient-primary) !important;
+}
+
+/* Inputs con estado success también usan verde */
+.is-valid,
+.was-validated .form-control:valid {
+    border-color: var(--success-color) !important;
+}
+
+.valid-feedback {
+    color: var(--success-color) !important;
+}
+
+/* Tooltips y popovers */
+.tooltip-inner {
+    background-color: var(--primary-color) !important;
+}
+
+.bs-tooltip-top .tooltip-arrow::before,
+.bs-tooltip-auto[data-popper-placement^="top"] .tooltip-arrow::before {
+    border-top-color: var(--primary-color) !important;
+}
+
+/* SweetAlert personalización */
+.swal2-confirm {
+    background-color: var(--primary-color) !important;
+}
+
+.swal2-cancel {
+    background-color: var(--danger-color) !important;
+}
+
+/* DataTables personalización */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    background: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: var(--primary-light) !important;
+    border-color: var(--primary-light) !important;
+}
+
+/* Gradientes consistentes */
+.bg-gradient,
+.bg-gradient-primary {
+    background: var(--gradient-primary) !important;
+}
+
+/* Iconos destacados */
+.icon-featured {
+    color: var(--primary-color);
+    transition: all var(--transition-speed);
+}
+
+.icon-featured:hover {
+    color: var(--primary-light);
+    transform: scale(1.1);
+}
+
+/* Badges con variaciones de verde */
+.badge-excellent {
+    background: var(--excellent-color) !important;
+    color: white !important;
+}
+
+.badge-good {
+    background: var(--good-color) !important;
+    color: white !important;
+}
+
+.badge-moderate {
+    background: var(--moderate-color) !important;
+    color: #212529 !important;
+}
+
+.badge-weak {
+    background: var(--weak-color) !important;
+    color: white !important;
 }
 

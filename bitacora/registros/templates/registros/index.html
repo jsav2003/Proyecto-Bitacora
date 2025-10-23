@@ -20,19 +20,19 @@
 
 <!-- Dashboard Cards -->
 <div class="row g-4 mb-5">
-    <div class="col-md-6">
-        <div class="card card-stats border-primary text-center h-100">
+    <div class="col-md-4">
+        <div class="card card-stats border-success text-center h-100">
             <div class="card-body">
-                <div class="card-icon text-primary">
+                <div class="card-icon text-success">
                     <i class="bi bi-people-fill"></i>
                 </div>
                 <h3 class="stats-number" data-target="{{ estudiantes_count }}">0</h3>
                 <p class="text-muted mb-4">Estudiantes Registrados</p>
                 <div class="d-grid gap-2">
-                    <a href="{% url 'estudiante_crear' %}" class="btn btn-primary btn-lg">
+                    <a href="{% url 'estudiante_crear' %}" class="btn btn-success btn-lg">
                         <i class="bi bi-plus-circle-fill me-2"></i> Registrar Estudiante
                     </a>
-                    <a href="{% url 'estudiante_listar' %}" class="btn btn-outline-primary">
+                    <a href="{% url 'estudiante_listar' %}" class="btn btn-outline-success">
                         <i class="bi bi-list-ul me-2"></i> Ver Todos
                     </a>
                 </div>
@@ -40,7 +40,7 @@
         </div>
     </div>
     
-    <div class="col-md-6">
+    <div class="col-md-4">
         <div class="card card-stats border-success text-center h-100">
             <div class="card-body">
                 <div class="card-icon text-success">
@@ -54,6 +54,26 @@
                     </a>
                     <a href="{% url 'medicion_listar' %}" class="btn btn-outline-success">
                         <i class="bi bi-list-ul me-2"></i> Ver Todas
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="card card-stats border-success text-center h-100">
+            <div class="card-body">
+                <div class="card-icon text-success">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <h3 class="stats-number" data-target="{{ estudiantes_count }}">0</h3>
+                <p class="text-muted mb-4">Análisis de Regresión</p>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'analisis_dashboard' %}" class="btn btn-success btn-lg">
+                        <i class="bi bi-bar-chart-line me-2"></i> Ver Análisis
+                    </a>
+                    <a href="{% url 'medicion_listar' %}" class="btn btn-outline-success">
+                        <i class="bi bi-table me-2"></i> Ver Datos
                     </a>
                 </div>
             </div>
@@ -75,11 +95,11 @@
                 <div class="row g-4">
                     <div class="col-md-4 text-center">
                         <div class="mb-3">
-                            <div class="badge bg-primary rounded-circle p-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                            <div class="badge bg-success rounded-circle p-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
                                 1
                             </div>
                         </div>
-                        <h5 class="text-primary">
+                        <h5 class="text-success">
                             <i class="bi bi-person-plus-fill"></i> Registrar Estudiantes
                         </h5>
                         <p class="text-muted">
@@ -89,7 +109,7 @@
                     
                     <div class="col-md-4 text-center">
                         <div class="mb-3">
-                            <div class="badge bg-success rounded-circle p-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                            <div class="badge bg-success rounded-circle p-3" style="width: 60px; height: 60px; font-size: 1.5rem; opacity: 0.85;">
                                 2
                             </div>
                         </div>
@@ -103,11 +123,11 @@
                     
                     <div class="col-md-4 text-center">
                         <div class="mb-3">
-                            <div class="badge bg-info rounded-circle p-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                            <div class="badge bg-success rounded-circle p-3" style="width: 60px; height: 60px; font-size: 1.5rem; opacity: 0.7;">
                                 3
                             </div>
                         </div>
-                        <h5 class="text-info">
+                        <h5 class="text-success">
                             <i class="bi bi-graph-up-arrow"></i> Seguimiento
                         </h5>
                         <p class="text-muted">
@@ -124,7 +144,7 @@
 <div class="row mt-5">
     <div class="col-12">
         <h3 class="text-center mb-4">
-            <i class="bi bi-lightning-fill text-warning me-2"></i> 
+            <i class="bi bi-lightning-fill text-success me-2"></i> 
             Accesos Rápidos
         </h3>
     </div>
@@ -132,7 +152,7 @@
     <div class="col-md-4 col-sm-6 mb-3">
         <a href="{% url 'estudiante_listar' %}" class="card card-link text-decoration-none h-100">
             <div class="card-body text-center">
-                <i class="bi bi-people fs-1 text-primary mb-3"></i>
+                <i class="bi bi-people fs-1 text-success mb-3"></i>
                 <h5 class="card-title">Lista de Estudiantes</h5>
             </div>
         </a>
@@ -150,7 +170,7 @@
     <div class="col-md-4 col-sm-6 mb-3">
         <a href="{% url 'medicion_crear' %}" class="card card-link text-decoration-none h-100">
             <div class="card-body text-center">
-                <i class="bi bi-plus-circle fs-1 text-warning mb-3"></i>
+                <i class="bi bi-plus-circle fs-1 text-success mb-3"></i>
                 <h5 class="card-title">Nuevo Registro</h5>
             </div>
         </a>
