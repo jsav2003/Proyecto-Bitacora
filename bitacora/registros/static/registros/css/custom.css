@@ -273,6 +273,18 @@ main {
     padding: 0.5rem 0;
 }
 
+/* Asegurar que el texto de información de DataTables sea visible */
+.dataTables_wrapper .dataTables_info {
+    color: #495057 !important;
+    font-weight: 500;
+}
+
+.dataTables_wrapper .dataTables_length label,
+.dataTables_wrapper .dataTables_filter label {
+    color: #495057 !important;
+    font-weight: 500;
+}
+
 .dataTables_wrapper .dataTables_filter input {
     border-radius: var(--border-radius);
     border: 2px solid #e9ecef;
@@ -975,7 +987,7 @@ html {
 }
 
 .medicion-card-day {
-    background: linear-gradient(135deg, var(--primary-color), #0d6efd);
+    background: linear-gradient(135deg, var(--primary-color), #20c997);
     color: white;
     padding: 0.5rem 1rem;
     border-radius: var(--border-radius);
@@ -1292,15 +1304,45 @@ select:focus {
     background-color: var(--danger-color) !important;
 }
 
-/* DataTables personalización */
-.dataTables_wrapper .dataTables_paginate .paginate_button.current {
+/* DataTables personalización - Paginación */
+/* Forzar color blanco en el botón de página actual */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:focus,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:active {
     background: var(--primary-color) !important;
+    background-color: var(--primary-color) !important;
     border-color: var(--primary-color) !important;
+    color: #ffffff !important;
+}
+
+/* Asegurar que el enlace y span dentro del botón también sean blancos */
+.dataTables_wrapper .dataTables_paginate .paginate_button.current *,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current a,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current span,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover *,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover a,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover span {
+    color: #ffffff !important;
+}
+
+/* Bootstrap pagination también */
+.pagination .page-item.active .page-link,
+.pagination .page-item.active .page-link:hover,
+.pagination .page-item.active .page-link:focus {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    color: #ffffff !important;
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
     background: var(--primary-light) !important;
     border-color: var(--primary-light) !important;
+    color: var(--primary-color) !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    color: var(--primary-color) !important;
 }
 
 /* Gradientes consistentes */

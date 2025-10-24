@@ -72,4 +72,35 @@ class RegistroFotografico(models.Model):
         ordering = ['-fecha']
     
     def __str__(self):
+        if self.medicion:
+            return f"Foto - {self.estudiante.nombre} - Día {self.medicion.dia} - {self.fecha.strftime('%d/%m/%Y')}"
         return f"Foto - {self.estudiante.nombre} - {self.fecha.strftime('%d/%m/%Y')}"
+    
+    def clean(self):
+        """
+        Validación personalizada para prevenir registros fotográficos huérfanos.
+        """
+        from django.core.exceptions import ValidationError
+        
+        # Advertencia si no tiene medición asociada
+        if not self.medicion:
+            # Permitir guardado pero registrar advertencia
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.warning(f"Registro fotográfico sin medición asociada: Estudiante {self.estudiante.nombre}")
+    
+    @classmethod
+    def limpiar_registros_huerfanos(cls):
+        """
+        Elimina registros fotográficos huérfanos (sin medición asociada o con medición inválida).
+        Retorna el número de registros eliminados.
+        """
+        # Contar huérfanos
+        huerfanos = cls.objects.filter(medicion__isnull=True)
+        count = huerfanos.count()
+        
+        # Eliminar
+        if count > 0:
+            huerfanos.delete()
+            
+        return count

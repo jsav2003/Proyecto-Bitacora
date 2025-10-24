@@ -70,14 +70,24 @@ def logout_view(request):
 # Vista principal
 @login_required
 def index(request):
+    # Limpiar registros fotográficos huérfanos antes de contar
+    RegistroFotografico.limpiar_registros_huerfanos()
+    
     estudiantes_count = Estudiante.objects.count()
     mediciones_count = MedicionPlantas.objects.count()
-    fotos_count = RegistroFotografico.objects.count()
+    fotos_count = RegistroFotografico.objects.filter(medicion__isnull=False).count()
+    
+    # Calcular cuántos estudiantes tienen suficientes mediciones para análisis (>=2)
+    analisis_count = 0
+    for estudiante in Estudiante.objects.all():
+        if MedicionPlantas.objects.filter(estudiante=estudiante).count() >= 2:
+            analisis_count += 1
     
     context = {
         'estudiantes_count': estudiantes_count,
         'mediciones_count': mediciones_count,
         'fotos_count': fotos_count,
+        'analisis_count': analisis_count,
     }
     return render(request, 'registros/index.html', context)
 
@@ -207,8 +217,12 @@ def medicion_listar(request):
 @login_required
 def medicion_editar(request, pk):
     medicion = get_object_or_404(MedicionPlantas, pk=pk)
-    # Obtener foto asociada si existe (ahora es simple con OneToOne)
-    registro_foto = medicion.foto if hasattr(medicion, 'foto') else None
+    
+    # Obtener foto asociada si existe (usando try/except para OneToOne)
+    try:
+        registro_foto = medicion.foto
+    except RegistroFotografico.DoesNotExist:
+        registro_foto = None
     
     if request.method == 'POST':
         form = MedicionPlantasForm(request.POST, request.FILES, instance=medicion)
@@ -223,19 +237,22 @@ def medicion_editar(request, pk):
             if registro_foto:
                 # Actualizar registro existente
                 if imagen:
+                    # Eliminar la imagen anterior si existe
+                    if registro_foto.imagen:
+                        registro_foto.imagen.delete(save=False)
                     registro_foto.imagen = imagen
                 registro_foto.comentario = comentario
                 registro_foto.save()
-                messages.success(request, 'Medición actualizada exitosamente.')
+                messages.success(request, 'Medición y fotografía actualizadas exitosamente.')
             elif imagen:
                 # Crear nuevo registro solo si hay imagen
                 RegistroFotografico.objects.create(
-                    medicion=medicion,  # ← Relación directa
+                    medicion=medicion,
                     estudiante=medicion.estudiante,
                     imagen=imagen,
                     comentario=comentario
                 )
-                messages.success(request, 'Medición y fotografía actualizadas exitosamente.')
+                messages.success(request, 'Medición y fotografía guardadas exitosamente.')
             else:
                 messages.success(request, 'Medición actualizada exitosamente.')
             
@@ -287,8 +304,14 @@ def registro_fotografico_crear(request):
 
 @login_required
 def registro_fotografico_listar(request):
+    # Limpiar registros huérfanos automáticamente
+    RegistroFotografico.limpiar_registros_huerfanos()
+    
     estudiante_id = request.GET.get('estudiante', '')
-    registros = RegistroFotografico.objects.select_related('estudiante').all()
+    # Filtrar solo registros con medición asociada válida
+    registros = RegistroFotografico.objects.select_related('estudiante', 'medicion').filter(
+        medicion__isnull=False
+    ).all()
     
     if estudiante_id:
         registros = registros.filter(estudiante_id=estudiante_id)
@@ -430,6 +453,7 @@ def analisis_dashboard(request):
                 'estudiante': estudiante,
                 'num_mediciones': num_mediciones,
                 'dias_registrados': f"{int(dias.min())} - {int(dias.max())}",
+                'dias_transcurridos': int(dias.max()),
                 'altura_inicial': float(alturas[0]),
                 'altura_final': float(alturas[-1]),
                 'crecimiento_total': float(alturas[-1] - alturas[0]),

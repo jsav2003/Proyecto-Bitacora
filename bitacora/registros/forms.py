@@ -130,7 +130,7 @@ class MedicionPlantasForm(forms.ModelForm):
             }),
             'altura': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Altura de la planta en cm',
+                'placeholder': 'Ejemplo: 15.5',
                 'step': '0.01',
                 'min': '0'
             }),
