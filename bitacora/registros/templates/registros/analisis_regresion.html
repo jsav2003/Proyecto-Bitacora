@@ -135,6 +135,111 @@
         </div>
     </div>
 
+    <!-- Sección de Predicción -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow border-{% if puede_predecir %}success{% else %}warning{% endif %}">
+                <div class="card-header bg-{% if puede_predecir %}success{% else %}warning{% endif %} text-white">
+                    <h5 class="mb-0">
+                        <i class="fas fa-crystal-ball"></i> Predicción de Crecimiento
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if puede_predecir %}
+                        <div class="alert alert-info mb-3">
+                            <i class="fas fa-info-circle"></i> 
+                            <strong>Información:</strong> Puedes predecir la altura de la planta hasta 5 días adelante del último día registrado.
+                            <br><strong>Último día registrado:</strong> Día {{ dia_maximo }}
+                            <br><strong>Puedes predecir hasta:</strong> Día {{ dia_max_permitido }}
+                        </div>
+                        
+                        <form method="post" class="row g-3 align-items-end">
+                            {% csrf_token %}
+                            <div class="col-md-6">
+                                <label for="dia_prediccion" class="form-label">
+                                    <i class="fas fa-calendar-day"></i> Día a predecir:
+                                </label>
+                                <input type="number" 
+                                       class="form-control form-control-lg" 
+                                       id="dia_prediccion" 
+                                       name="dia_prediccion" 
+                                       min="{{ dia_maximo|add:1 }}" 
+                                       max="{{ dia_max_permitido }}"
+                                       placeholder="Ingresa el día ({{ dia_maximo|add:1 }} - {{ dia_max_permitido }})"
+                                       value="{{ dia_prediccion|default:'' }}"
+                                       required>
+                                <div class="form-text">
+                                    Ingresa un día entre {{ dia_maximo|add:1 }} y {{ dia_max_permitido }}
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-success btn-lg w-100">
+                                    <i class="fas fa-calculator"></i> Calcular Predicción
+                                </button>
+                            </div>
+                        </form>
+
+                        {% if altura_prediccion %}
+                        <div class="mt-4">
+                            <div class="alert alert-success border-success" role="alert">
+                                <h5 class="alert-heading">
+                                    <i class="fas fa-check-circle"></i> Resultado de la Predicción
+                                </h5>
+                                <hr>
+                                <div class="row text-center">
+                                    <div class="col-md-4">
+                                        <h6 class="text-muted">Día Predicho</h6>
+                                        <h3 class="text-success"><i class="fas fa-calendar"></i> Día {{ dia_prediccion }}</h3>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6 class="text-muted">Altura Predicha</h6>
+                                        <h3 class="text-primary"><i class="fas fa-ruler-vertical"></i> {{ altura_prediccion }} cm</h3>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h6 class="text-muted">Fórmula Utilizada</h6>
+                                        <h5 class="text-muted">y = {{ a0|floatformat:2 }} + {{ a1|floatformat:2 }}({{ dia_prediccion }})</h5>
+                                    </div>
+                                </div>
+                                <hr>
+                                <p class="mb-0 small">
+                                    <i class="fas fa-lightbulb"></i> <strong>Nota:</strong> 
+                                    Esta predicción está basada en el modelo de regresión lineal. 
+                                    La precisión depende de qué tan lineal sea el crecimiento real de la planta.
+                                </p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="alert alert-warning mb-0">
+                            <h5 class="alert-heading">
+                                <i class="fas fa-exclamation-triangle"></i> Datos Insuficientes para Predicción
+                            </h5>
+                            <p class="mb-2">
+                                Se necesitan <strong>al menos 7 mediciones</strong> para realizar predicciones confiables.
+                            </p>
+                            <p class="mb-0">
+                                <strong>Mediciones actuales:</strong> {{ num_mediciones }} de 7 requeridas
+                            </p>
+                            <div class="progress mt-3" style="height: 25px;">
+                                <div class="progress-bar bg-warning" 
+                                     role="progressbar" 
+                                     id="progress-mediciones"
+                                     aria-valuenow="{{ num_mediciones }}" 
+                                     aria-valuemin="0" 
+                                     aria-valuemax="7">
+                                    {{ num_mediciones }}/7
+                                </div>
+                            </div>
+                            <script>
+                                document.getElementById('progress-mediciones').style.width = '{{ porcentaje_progreso }}%';
+                            </script>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Tabla de Datos -->
     <div class="row mb-4">
         <div class="col-md-12">

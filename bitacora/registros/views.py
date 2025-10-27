@@ -513,12 +513,16 @@ def analisis_dashboard(request):
 def analisis_regresion(request, estudiante_id):
     """
     Vista para mostrar el análisis de regresión lineal del crecimiento de plantas
+    con capacidad de predicción temporal (solo visible después de calcular)
     """
     estudiante = get_object_or_404(Estudiante, pk=estudiante_id)
     mediciones = MedicionPlantas.objects.filter(estudiante=estudiante).order_by('dia')
     
-    # Verificar que haya suficientes datos
-    if mediciones.count() < 2:
+    # Verificar que haya suficientes datos para predicción (mínimo 7 mediciones)
+    num_mediciones = mediciones.count()
+    puede_predecir = num_mediciones >= 7
+    
+    if num_mediciones < 2:
         messages.warning(request, 'Se necesitan al menos 2 mediciones para realizar el análisis.')
         return redirect('medicion_listar')
     
@@ -532,14 +536,66 @@ def analisis_regresion(request, estudiante_id):
     # Calcular coeficientes de correlación
     r, r2 = calcular_coeficiente_correlacion(dias, alturas, a0, a1)
     
+    # Variables para predicción
+    dia_prediccion = None
+    altura_prediccion = None
+    dia_maximo = int(dias.max())
+    dia_max_permitido = dia_maximo + 5  # Máximo 5 días hacia adelante
+    
+    # Procesar predicción si se envió el formulario (POST-Redirect-GET sin parámetros)
+    if request.method == 'POST' and puede_predecir:
+        try:
+            dia_prediccion_input = int(request.POST.get('dia_prediccion', 0))
+            
+            # Validaciones
+            if dia_prediccion_input <= dia_maximo:
+                messages.warning(request, f'El día a predecir debe ser mayor al último día registrado ({dia_maximo}).')
+            elif dia_prediccion_input > dia_max_permitido:
+                messages.warning(request, f'Solo puedes predecir hasta 5 días adelante (día {dia_max_permitido} máximo).')
+            else:
+                # Calcular predicción y guardar en sesión
+                altura_pred = float(a0 + a1 * dia_prediccion_input)
+                request.session['prediccion'] = {
+                    'dia': dia_prediccion_input,
+                    'altura': altura_pred,
+                    'estudiante_id': estudiante_id
+                }
+                messages.success(request, f'Predicción calculada exitosamente para el día {dia_prediccion_input}.')
+        except (ValueError, TypeError):
+            messages.error(request, 'Por favor ingresa un número válido para el día a predecir.')
+        
+        # IMPORTANTE: Redirigir después de POST para evitar reenvío del formulario
+        return redirect('analisis_regresion', estudiante_id=estudiante_id)
+    
+    # Recuperar predicción de la sesión (solo si es para este estudiante)
+    if 'prediccion' in request.session:
+        pred_data = request.session['prediccion']
+        if pred_data.get('estudiante_id') == estudiante_id:
+            dia_prediccion = pred_data['dia']
+            altura_prediccion = pred_data['altura']
+        # Limpiar la predicción de la sesión después de mostrarla
+        del request.session['prediccion']
+    
     # Generar puntos para la línea de regresión
     dias_linea = np.linspace(dias.min(), dias.max(), 100)
     alturas_linea = a0 + a1 * dias_linea
     
+    # Si hay predicción válida, extender la línea
+    if dia_prediccion and altura_prediccion:
+        dias_linea_ext = np.linspace(dias.min(), dia_prediccion, 100)
+        alturas_linea_ext = a0 + a1 * dias_linea_ext
+    
     # Crear gráfica
     plt.figure(figsize=(10, 6))
-    plt.scatter(dias, alturas, color='blue', s=100, alpha=0.6, edgecolors='black', label='Datos medidos')
-    plt.plot(dias_linea, alturas_linea, color='red', linewidth=2, label=f'Regresión: y = {a0:.2f} + {a1:.2f}x')
+    plt.scatter(dias, alturas, color='blue', s=100, alpha=0.6, edgecolors='black', label='Datos medidos', zorder=3)
+    plt.plot(dias_linea, alturas_linea, color='red', linewidth=2, label=f'Regresión: y = {a0:.2f} + {a1:.2f}x', zorder=2)
+    
+    # Si hay predicción, mostrarla en la gráfica
+    if dia_prediccion and altura_prediccion:
+        plt.plot(dias_linea_ext, alturas_linea_ext, color='red', linewidth=2, linestyle='--', alpha=0.5, zorder=1)
+        plt.scatter([dia_prediccion], [altura_prediccion], color='green', s=150, alpha=0.8, 
+                   edgecolors='black', marker='*', label=f'Predicción día {dia_prediccion}', zorder=4)
+    
     plt.xlabel('Día', fontsize=12)
     plt.ylabel('Altura (cm)', fontsize=12)
     plt.title(f'Análisis de Crecimiento - {estudiante.nombre}', fontsize=14, fontweight='bold')
@@ -566,10 +622,16 @@ def analisis_regresion(request, estudiante_id):
         'r': round(r, 4),
         'r2': round(r2, 4),
         'ecuacion': f'y = {a0:.2f} + {a1:.2f}x',
-        'num_mediciones': mediciones.count(),
+        'num_mediciones': num_mediciones,
         'altura_inicial': float(alturas[0]),
         'altura_final': float(alturas[-1]),
         'crecimiento_promedio': round(a1, 2),
+        'puede_predecir': puede_predecir,
+        'dia_maximo': dia_maximo,
+        'dia_max_permitido': dia_max_permitido,
+        'dia_prediccion': dia_prediccion,
+        'altura_prediccion': round(altura_prediccion, 2) if altura_prediccion else None,
+        'porcentaje_progreso': round((num_mediciones / 7) * 100, 2) if num_mediciones < 7 else 100,
     }
     
     return render(request, 'registros/analisis_regresion.html', context)
