@@ -1,6 +1,6 @@
 {% extends 'registros/base.html' %}
 
-{% block title %}{{ accion }} Medición - Bitácora Científica{% endblock %}
+{% block title %}Editar Medición - Bitácora Científica{% endblock %}
 
 {% block breadcrumb %}
 <div class="container mt-3">
@@ -8,7 +8,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'index' %}"><i class="bi bi-house-fill"></i> Inicio</a></li>
             <li class="breadcrumb-item"><a href="{% url 'medicion_listar' %}">Mediciones</a></li>
-            <li class="breadcrumb-item active" aria-current="page">{{ accion }}</li>
+            <li class="breadcrumb-item active" aria-current="page">Editar</li>
         </ol>
     </nav>
 </div>
@@ -18,20 +18,16 @@
 <div class="row justify-content-center">
     <div class="col-lg-8 col-md-10">
         <!-- Card del Formulario -->
-        <div class="form-container-create">
+        <div class="form-container-edit">
             <!-- Encabezado -->
             <div class="text-center mb-4">
                 <div class="mb-3">
-                    <i class="bi {% if accion == 'Registrar' %}bi-bar-chart-line-fill{% else %}bi-pencil-square{% endif %} text-success" style="font-size: 3rem;"></i>
+                    <i class="bi bi-pencil-square text-warning" style="font-size: 3rem;"></i>
                 </div>
                 <h2 class="fw-bold">
-                    {% if accion == 'Registrar' %}
-                        <i class="bi bi-plus-circle-fill text-success me-2"></i> Registrar Nueva Medición
-                    {% else %}
-                        <i class="bi bi-pencil-fill text-warning me-2"></i> Editar Medición
-                    {% endif %}
+                    <i class="bi bi-pencil-fill text-warning me-2"></i> Editar Medición
                 </h2>
-                <p class="text-muted">Registra la altura de la planta del estudiante para el día indicado</p>
+                <p class="text-muted">Actualiza los datos de la medición de la planta</p>
             </div>
 
             <!-- Formulario -->
@@ -56,10 +52,6 @@
                             </option>
                         {% endfor %}
                     </select>
-                    <div class="form-text">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Selecciona el estudiante que realizó la medición
-                    </div>
                     {% if form.estudiante.errors %}
                         <div class="invalid-feedback d-block">
                             {% for error in form.estudiante.errors %}
@@ -84,10 +76,6 @@
                            value="{{ form.dia.value|default:'' }}"
                            min="1"
                            required>
-                    <div class="form-text">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Número del día del experimento (1 para el primer día, 2 para el segundo, etc.)
-                    </div>
                     {% if form.dia.errors %}
                         <div class="invalid-feedback d-block">
                             {% for error in form.dia.errors %}
@@ -109,10 +97,6 @@
                         <span class="input-group-text bg-success text-white">
                             <i class="bi bi-rulers me-1"></i> cm
                         </span>
-                    </div>
-                    <div class="form-text">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Altura de la planta medida en centímetros (acepta decimales, ejemplo: 15.5)
                     </div>
                     {% if form.altura.errors %}
                         <div class="invalid-feedback d-block">
@@ -147,7 +131,7 @@
                     {% endif %}
                     
                     <!-- Preview de la imagen -->
-                    <div class="mt-2 text-center">
+                    <div class="mt-3 text-center">
                         {% if registro_foto and registro_foto.imagen %}
                             <p class="text-muted small mb-2">
                                 <i class="bi bi-image-fill me-1"></i> Fotografía actual:
@@ -176,10 +160,6 @@
                               class="form-control" 
                               placeholder="Observaciones y comentarios sobre la fotografía" 
                               rows="3">{% if form.comentario.value %}{{ form.comentario.value }}{% elif form.inicial.comentario %}{{ form.inicial.comentario }}{% elif registro_foto %}{{ registro_foto.comentario }}{% endif %}</textarea>
-                    <div class="form-text">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Agrega observaciones o comentarios sobre la fotografía (opcional)
-                    </div>
                     {% if form.comentario.errors %}
                         <div class="invalid-feedback d-block">
                             {% for error in form.comentario.errors %}
@@ -205,25 +185,22 @@
                         <i class="bi bi-arrow-left-circle-fill me-2"></i> Cancelar
                     </a>
                     <button type="submit" class="btn btn-success btn-lg">
-                        <i class="bi bi-save-fill me-2"></i> 
-                        {% if accion == 'Registrar' %}Registrar Medición{% else %}Guardar Cambios{% endif %}
+                        <i class="bi bi-save-fill me-2"></i> Guardar Cambios
                     </button>
                 </div>
             </form>
         </div>
 
-        <!-- Información Adicional -->
+        <!-- Información Adicional - Con espaciado optimizado -->
         <div class="alert alert-success alert-dismissible fade show mt-3 mb-5" role="alert">
             <h6 class="alert-heading">
-                <i class="bi bi-lightbulb-fill me-2"></i> Consejos para el registro:
+                <i class="bi bi-lightbulb-fill me-2"></i> Consejos para la edición:
             </h6>
             <ul class="mb-0 small ps-3">
-                <li>Utiliza una regla o cinta métrica para medir la altura desde la base hasta la punta más alta</li>
-                <li>Registra la medición en centímetros (puedes usar decimales para mayor precisión)</li>
-                <li>Realiza las mediciones a la misma hora cada día para mantener consistencia</li>
+                <li>Utiliza una regla o cinta métrica para medir la altura con precisión</li>
+                <li>La altura debe estar en centímetros (puedes usar decimales)</li>
                 <li>Un estudiante solo puede tener una medición por día</li>
-                <li>La fotografía es opcional, pero muy recomendada para documentar visualmente el crecimiento</li>
-                <li>Asegúrate de seleccionar el estudiante correcto antes de guardar</li>
+                <li>La fotografía es opcional, pero recomendada para documentar el crecimiento</li>
             </ul>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>

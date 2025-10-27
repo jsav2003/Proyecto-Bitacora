@@ -140,7 +140,7 @@ def estudiante_editar(request, pk):
     else:
         form = EstudianteForm(instance=estudiante)
     
-    return render(request, 'registros/estudiante_form.html', {'form': form, 'accion': 'Editar'})
+    return render(request, 'registros/estudiante_editar.html', {'form': form, 'accion': 'Editar'})
 
 
 @login_required
@@ -271,7 +271,7 @@ def medicion_editar(request, pk):
         'accion': 'Editar',
         'registro_foto': registro_foto
     }
-    return render(request, 'registros/medicion_form.html', context)
+    return render(request, 'registros/medicion_editar.html', context)
 
 
 @login_required

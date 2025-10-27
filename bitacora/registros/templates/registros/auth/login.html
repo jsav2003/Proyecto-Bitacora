@@ -6,7 +6,7 @@
 <div class="row justify-content-center">
     <div class="col-lg-5 col-md-7">
         <!-- Card de Login -->
-        <div class="form-container">
+        <div class="form-container-auth">
             <!-- Encabezado -->
             <div class="text-center mb-4">
                 <div class="mb-3">
@@ -23,7 +23,7 @@
                 {% csrf_token %}
                 
                 <!-- Campo: Usuario -->
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="{{ form.username.id_for_label }}" class="form-label">
                         <i class="bi bi-person-fill text-success me-2"></i>
                         Usuario
@@ -40,7 +40,7 @@
                 </div>
 
                 <!-- Campo: Contraseña -->
-                <div class="mb-4">
+                <div class="mb-3">
                     <label for="{{ form.password.id_for_label }}" class="form-label">
                         <i class="bi bi-lock-fill text-success me-2"></i>
                         Contraseña
@@ -74,8 +74,8 @@
                 </div>
 
                 <!-- Link a Registro -->
-                <div class="text-center">
-                    <p class="text-muted">
+                <div class="text-center mb-0">
+                    <p class="text-muted mb-0">
                         ¿No tienes cuenta? 
                         <a href="{% url 'registro' %}" class="text-success fw-bold text-decoration-none">
                             Regístrate aquí
@@ -85,17 +85,19 @@
             </form>
         </div>
 
-        <!-- Información Adicional -->
-        <div class="card mt-4 border-success info-card">
-            <div class="card-body text-center">
-                <h6 class="text-success">
-                    <i class="bi bi-info-circle-fill me-2"></i> Acceso a la Bitácora Científica
-                </h6>
-                <p class="mb-0 small text-muted">
-                    Sistema de registro para el experimento de crecimiento de plantas de frijol
-                </p>
-            </div>
+        <!-- Información Adicional - Optimizada -->
+        <div class="alert alert-success alert-dismissible fade show mt-3 mb-5" role="alert">
+            <h6 class="alert-heading">
+                <i class="bi bi-info-circle-fill me-2"></i> Acceso a la Bitácora Científica
+            </h6>
+            <p class="mb-0 small">
+                Sistema de registro para el experimento de crecimiento de plantas de frijol
+            </p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     </div>
 </div>
+
+<!-- Espaciador para evitar solapamiento con footer -->
+<div style="height: 80px;"></div>
 {% endblock %}

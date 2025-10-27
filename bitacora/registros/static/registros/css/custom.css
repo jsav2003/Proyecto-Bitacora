@@ -66,10 +66,10 @@ body {
 }
 
 main {
-    flex: 1;
-    padding-bottom: 8rem;
-    margin-bottom: 3rem;
-    min-height: calc(100vh - 300px);
+    flex: 1 0 auto;
+    padding-bottom: 3rem;
+    margin-bottom: 0;
+    width: 100%;
 }
 
 /* Navbar Personalizado */
@@ -335,7 +335,34 @@ main {
     border-radius: var(--border-radius);
     box-shadow: var(--shadow-md);
     padding: 2rem;
-    margin: 2rem auto 3rem auto;
+    margin: 2rem auto 2rem auto;
+}
+
+/* Formularios de Creación - Optimizado para evitar solapamiento */
+.form-container-create {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+    margin: 1.5rem auto 0 auto;
+}
+
+/* Formularios de Edición - Optimizado para evitar solapamiento */
+.form-container-edit {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+    margin: 1.5rem auto 0 auto;
+}
+
+/* Formularios de Autenticación - Login y Registro */
+.form-container-auth {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+    margin: 2rem auto 0 auto;
 }
 
 .form-label {
@@ -458,7 +485,7 @@ footer {
     background: var(--gradient-primary);
     color: white;
     padding: 2rem 0;
-    margin-top: 5rem;
+    margin-top: 3rem;
     box-shadow: var(--shadow-lg);
     position: relative;
     width: 100%;
@@ -505,27 +532,60 @@ footer a:hover {
 /* Espaciado extra para cards después de formularios */
 .form-container + .card,
 .form-container + .row .card {
-    margin-bottom: 6rem !important;
+    margin-bottom: 3rem !important;
 }
 
 /* Card de información/consejos después del formulario */
 .card.border-info,
+.card.border-success,
 .card.mt-4 {
-    margin-bottom: 6rem !important;
+    margin-bottom: 3rem !important;
 }
 
-/* Card de consejos/información con clase específica - MARGEN MUY GRANDE */
+/* Card de consejos/información con clase específica */
 .info-card {
-    margin-bottom: 10rem !important;
+    margin-bottom: 3rem !important;
     position: relative;
     z-index: 1;
+    overflow: hidden;
+}
+
+/* Especificidad adicional para asegurar que se aplique */
+.card.info-card,
+.card.border-info.info-card,
+.card.mt-4.border-info.info-card,
+.card.border-success.info-card,
+.card.mt-4.border-success.info-card {
+    margin-bottom: 3rem !important;
+    margin-top: 1.5rem !important; /* Sobrescribir mt-4 de Bootstrap */
+}
+
+.info-card .card-body {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.info-card ul {
+    padding-left: 1.5rem;
+    margin-bottom: 0;
+}
+
+.info-card ul li {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    margin-bottom: 0.5rem;
 }
 
 /* Espaciado general para evitar solapamiento del footer */
 .container > .row:last-child,
 .container > .card:last-child,
 .container > div:last-child {
-    margin-bottom: 6rem !important;
+    margin-bottom: 2rem !important;
+}
+
+/* El row que contiene los formularios también debe tener margen inferior */
+main.container > .row {
+    margin-bottom: 2rem !important;
 }
 
 /* Responsividad Mejorada */
@@ -559,7 +619,7 @@ footer a:hover {
     /* Formularios */
     .form-container {
         padding: 1.5rem;
-        margin: 1rem auto 3rem auto;
+        margin: 1rem auto 2rem auto;
     }
 
     /* Tablas */
@@ -632,16 +692,16 @@ footer a:hover {
     /* Footer */
     footer {
         padding: 1.5rem 0;
-        margin-top: 3rem;
+        margin-top: 2rem;
     }
     
     /* Espaciado general */
     main {
-        padding-bottom: 4rem;
+        padding-bottom: 2rem;
     }
     
     .info-card {
-        margin-bottom: 5rem !important;
+        margin-bottom: 2rem !important;
     }
 }
 
