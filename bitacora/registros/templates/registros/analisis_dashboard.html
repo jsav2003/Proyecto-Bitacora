@@ -17,6 +17,8 @@
         <p class="lead text-muted">Modelado del crecimiento de plantas de frijol</p>
     </div>
     
+    <!-- Filtros - Solo para Administradores -->
+    {% if user.is_superuser or user.is_staff %}
     <div class="card shadow-sm mb-4">
         <div class="card-body">
             <form method="get" class="row g-3">
@@ -63,11 +65,14 @@
             </form>
         </div>
     </div>
+    {% endif %}
     
     {% if estudiantes_data %}
-    <div class="alert alert-success">
+    {% if user.is_superuser or user.is_staff %}
+    <div class="alert alert-success alert-permanent">
         <strong>{{ total_estudiantes }}</strong> estudiante{{ total_estudiantes|pluralize }} encontrado{{ total_estudiantes|pluralize }}
     </div>
+    {% endif %}
     
     <div class="row g-4">
         {% for data in estudiantes_data %}
@@ -151,10 +156,10 @@
     </div>
     
     {% else %}
-    <div class="alert alert-info text-center">
+    <div class="alert alert-info alert-permanent text-center">
         <i class="fas fa-info-circle fa-2x mb-2"></i>
-        <h5>No se encontraron estudiantes con datos suficientes</h5>
-        <p class="mb-0">Se requieren al menos 3 mediciones para realizar el analisis</p>
+        <h5>Datos insuficientes para análisis</h5>
+        <p class="mb-0">Se requieren al menos 2 mediciones para realizar el análisis. Comienza registrando las mediciones de tu planta.</p>
     </div>
     {% endif %}
     

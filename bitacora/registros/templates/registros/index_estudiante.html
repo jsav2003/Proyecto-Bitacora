@@ -1,0 +1,165 @@
+{% extends 'registros/base_estudiante.html' %}
+
+{% block title %}Inicio - Portal Estudiante{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="content text-center px-4">
+        <h1 class="display-3 fw-bold mb-3">
+            <i class="bi bi-seedling"></i> Portal del Estudiante
+        </h1>
+        <p class="lead fs-4 mb-4">
+            Registra tus mediciones y consulta el análisis del experimento de crecimiento de plantas
+        </p>
+        <p class="fs-5 mb-0">
+            <i class="bi bi-check-circle-fill me-2"></i> Bienvenido, {{ user.get_full_name|default:user.username }}
+        </p>
+    </div>
+</div>
+
+<!-- Dashboard Cards -->
+<div class="row g-4 mb-5">
+    <div class="col-md-6">
+        <div class="card card-stats border-success text-center h-100">
+            <div class="card-body">
+                <div class="card-icon text-success">
+                    <i class="bi bi-bar-chart-fill"></i>
+                </div>
+                <h3 class="stats-number" data-target="{{ mediciones_count }}">0</h3>
+                <p class="text-muted mb-4">Mediciones Totales</p>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'medicion_crear' %}" class="btn btn-success btn-lg">
+                        <i class="bi bi-plus-circle-fill me-2"></i> Nueva Medición + Foto
+                    </a>
+                    <a href="{% url 'medicion_listar' %}" class="btn btn-outline-success">
+                        <i class="bi bi-list-ul me-2"></i> Ver Mis Mediciones
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card card-stats border-success text-center h-100">
+            <div class="card-body">
+                <div class="card-icon text-success">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <h3 class="stats-number" data-target="{{ analisis_count }}">0</h3>
+                <p class="text-muted mb-4">Análisis Disponibles</p>
+                <div class="d-grid gap-2">
+                    <a href="{% url 'analisis_dashboard' %}" class="btn btn-success btn-lg">
+                        <i class="bi bi-bar-chart-line me-2"></i> Ver Análisis
+                    </a>
+                    <a href="{% url 'medicion_listar' %}" class="btn btn-outline-success">
+                        <i class="bi bi-table me-2"></i> Ver Datos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Instrucciones -->
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="card shadow">
+            <div class="card-header text-white text-center py-3" style="background: linear-gradient(135deg, #198754 0%, #20c997 100%);">
+                <h4 class="mb-0">
+                    <i class="bi bi-info-circle-fill me-2"></i> 
+                    ¿Cómo registrar tus mediciones?
+                </h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="row g-4">
+                    <div class="col-md-6 text-center">
+                        <div class="mb-3">
+                            <div class="badge bg-success rounded-circle p-3" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                                1
+                            </div>
+                        </div>
+                        <h5 class="text-success">
+                            <i class="bi bi-rulers"></i> Registrar Mediciones
+                        </h5>
+                        <p class="text-muted">
+                            Cada día, registra la altura de tu planta y sube una fotografía del crecimiento
+                        </p>
+                    </div>
+                    
+                    <div class="col-md-6 text-center">
+                        <div class="mb-3">
+                            <div class="badge bg-success rounded-circle p-3" style="width: 60px; height: 60px; font-size: 1.5rem; opacity: 0.85;">
+                                2
+                            </div>
+                        </div>
+                        <h5 class="text-success">
+                            <i class="bi bi-graph-up-arrow"></i> Consultar Análisis
+                        </h5>
+                        <p class="text-muted">
+                            Revisa el análisis de regresión lineal para ver el patrón de crecimiento de las plantas
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info alert-permanent mt-4" role="alert">
+                    <i class="bi bi-lightbulb-fill me-2"></i>
+                    <strong>Consejo:</strong> Registra tus mediciones diariamente a la misma hora para obtener resultados más precisos.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Accesos Rápidos -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h3 class="text-center mb-4">
+            <i class="bi bi-lightning-fill text-success me-2"></i> 
+            Accesos Rápidos
+        </h3>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <a href="{% url 'medicion_crear' %}" class="card card-link text-decoration-none h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-plus-circle fs-1 text-success mb-3"></i>
+                <h5 class="card-title">Nuevo Registro</h5>
+                <p class="text-muted small mb-0">Registrar nueva medición con foto</p>
+            </div>
+        </a>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <a href="{% url 'medicion_listar' %}" class="card card-link text-decoration-none h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-graph-up fs-1 text-success mb-3"></i>
+                <h5 class="card-title">Mis Mediciones</h5>
+                <p class="text-muted small mb-0">Ver historial de registros</p>
+            </div>
+        </a>
+    </div>
+    
+    <div class="col-md-4 mb-3">
+        <a href="{% url 'analisis_dashboard' %}" class="card card-link text-decoration-none h-100">
+            <div class="card-body text-center">
+                <i class="bi bi-bar-chart-line fs-1 text-success mb-3"></i>
+                <h5 class="card-title">Análisis de Datos</h5>
+                <p class="text-muted small mb-0">Consultar regresión lineal</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<style>
+.card-link {
+    transition: all 0.3s;
+    color: #212529;
+}
+
+.card-link:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,0.175) !important;
+}
+</style>
+{% endblock %}

@@ -32,7 +32,8 @@
     </div>
 </div>
 
-<!-- Filtro por Estudiante -->
+<!-- Filtro por Estudiante - Solo para Administradores -->
+{% if user.is_superuser or user.is_staff %}
 {% if estudiantes %}
 <div class="card mb-4 shadow-sm">
     <div class="card-body">
@@ -68,6 +69,8 @@
         </form>
     </div>
 </div>
+{% endif %}
+{% endif %}
 
 <!-- Banner de Análisis -->
 <div class="banner-analisis-fijo mb-4" role="alert" style="background: linear-gradient(135deg, #198754 0%, #20c997 100%); border: none; border-radius: 12px; padding: 20px; box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075); opacity: 1 !important; visibility: visible !important; display: block !important;">
@@ -89,7 +92,6 @@
         </div>
     </div>
 </div>
-{% endif %}
 
 {% if mediciones %}
 <!-- Vista de Cards para Móviles -->
@@ -269,32 +271,6 @@
     </table>
     </div>
 </div>
-</div>
-
-<!-- Estadísticas Rápidas -->
-<div class="row mt-4">
-    <div class="col-md-6 mb-3">
-        <div class="card border-success text-center">
-            <div class="card-body">
-                <i class="bi bi-graph-up-arrow fs-1 text-success"></i>
-                <h5 class="mt-2">Progreso del Experimento</h5>
-                <p class="text-muted">Seguimiento diario del crecimiento con fotografías</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6 mb-3">
-        <div class="card border-success text-center">
-            <div class="card-body">
-                <i class="bi bi-people-fill fs-1 text-success"></i>
-                <h5 class="mt-2">Estudiantes</h5>
-                <p class="text-muted">Gestionar participantes del experimento</p>
-                <a href="{% url 'estudiante_listar' %}" class="btn btn-sm btn-outline-success mt-2">
-                    Ver Estudiantes
-                </a>
-            </div>
-        </div>
-    </div>
 </div>
 
 {% else %}

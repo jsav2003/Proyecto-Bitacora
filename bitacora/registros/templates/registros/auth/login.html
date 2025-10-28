@@ -58,7 +58,7 @@
 
                 <!-- Errores generales del formulario -->
                 {% if form.non_field_errors %}
-                <div class="alert alert-danger" role="alert">
+                <div class="alert alert-danger alert-permanent" role="alert">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     {% for error in form.non_field_errors %}
                         {{ error }}
@@ -86,7 +86,7 @@
         </div>
 
         <!-- Información Adicional - Optimizada -->
-        <div class="alert alert-success alert-dismissible fade show mt-3 mb-5" role="alert">
+        <div class="alert alert-success alert-permanent alert-dismissible fade show mt-3 mb-5" role="alert">
             <h6 class="alert-heading">
                 <i class="bi bi-info-circle-fill me-2"></i> Acceso a la Bitácora Científica
             </h6>

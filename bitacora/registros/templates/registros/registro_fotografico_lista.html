@@ -134,6 +134,7 @@
                        title="Descargar imagen">
                         <i class="bi bi-download me-1"></i> Descargar
                     </a>
+                    {% if user.is_superuser or user.is_staff %}
                     <a href="{% url 'registro_fotografico_eliminar' registro.pk %}" 
                        class="btn btn-sm btn-danger flex-fill btn-delete"
                        data-bs-toggle="tooltip"
@@ -141,6 +142,7 @@
                        data-name="Fotografía de {{ registro.estudiante.nombre }}">
                         <i class="bi bi-trash-fill me-1"></i> Eliminar
                     </a>
+                    {% endif %}
                 </div>
             </div>
         </div>

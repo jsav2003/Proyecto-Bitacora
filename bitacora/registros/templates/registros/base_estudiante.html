@@ -4,9 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistema de gestión de bitácora científica para el experimento de crecimiento de plantas">
+    <meta name="description" content="Portal del estudiante - Bitácora científica para el experimento de crecimiento de plantas">
     <meta name="author" content="Bitácora Científica">
-    <title>{% block title %}Bitácora Científica{% endblock %}</title>
+    <title>{% block title %}Portal Estudiante - Bitácora Científica{% endblock %}</title>
     
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -27,11 +27,11 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Navbar Fixed Top -->
+    <!-- Navbar Fixed Top - Versión Estudiante -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-success fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="{% url 'index' %}">
-                <i class="bi bi-journal-text"></i> Bitácora Científica
+                <i class="bi bi-journal-text"></i> Portal Estudiante
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,18 +45,10 @@
                             <i class="bi bi-house-door-fill"></i> Inicio
                         </a>
                     </li>
-                    {% if user.is_superuser or user.is_staff %}
-                    <li class="nav-item">
-                        <a class="nav-link {% if 'estudiante' in request.resolver_match.url_name %}active{% endif %}" 
-                           href="{% url 'estudiante_listar' %}">
-                            <i class="bi bi-people-fill"></i> Estudiantes
-                        </a>
-                    </li>
-                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link {% if 'medicion' in request.resolver_match.url_name %}active{% endif %}" 
                            href="{% url 'medicion_listar' %}">
-                            <i class="bi bi-bar-chart-fill"></i> Mediciones
+                            <i class="bi bi-bar-chart-fill"></i> Mis Mediciones
                         </a>
                     </li>
                     <li class="nav-item">
@@ -130,8 +122,8 @@
         <div class="container py-4">
             <div class="row">
                 <div class="col-md-4 mb-3 mb-md-0">
-                    <h5><i class="bi bi-seedling"></i> Bitácora Científica</h5>
-                    <p class="mb-0">Sistema de gestión de experimentos</p>
+                    <h5><i class="bi bi-seedling"></i> Portal Estudiante</h5>
+                    <p class="mb-0">Sistema de registro de mediciones</p>
                 </div>
                 <div class="col-md-4 mb-3 mb-md-0">
                     <h5><i class="bi bi-info-circle"></i> Información</h5>

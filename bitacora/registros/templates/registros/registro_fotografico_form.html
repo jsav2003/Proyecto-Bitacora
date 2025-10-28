@@ -127,7 +127,7 @@
 
                 <!-- Errores No de Campo -->
                 {% if form.non_field_errors %}
-                <div class="alert alert-danger" role="alert">
+                <div class="alert alert-danger alert-permanent" role="alert">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
                     {% for error in form.non_field_errors %}
                         {{ error }}

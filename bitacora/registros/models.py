@@ -1,9 +1,19 @@
 from django.db import models
 from django.core.validators import MinValueValidator
+from django.contrib.auth.models import User
 from decimal import Decimal
 
 
 class Estudiante(models.Model):
+    usuario = models.OneToOneField(
+        User,
+        on_delete=models.PROTECT,  # Cambiado de SET_NULL a PROTECT para evitar datos huérfanos
+        null=True,
+        blank=True,
+        related_name='estudiante',
+        verbose_name="Usuario asociado",
+        help_text="Usuario que puede iniciar sesión con esta cuenta de estudiante"
+    )
     nombre = models.CharField(max_length=255, verbose_name="Nombre completo")
     correo_institucional = models.EmailField(unique=True, verbose_name="Correo institucional")
     grupo = models.IntegerField(verbose_name="Grupo/Curso")

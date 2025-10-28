@@ -45,21 +45,32 @@
                         {{ form.estudiante.label }}
                         <span class="text-danger">*</span>
                     </label>
-                    <select name="{{ form.estudiante.name }}" 
-                            id="{{ form.estudiante.id_for_label }}"
-                            class="form-select {% if form.estudiante.errors %}is-invalid{% endif %}" 
-                            required>
-                        <option value="">-- Selecciona un estudiante --</option>
-                        {% for choice in form.estudiante.field.queryset %}
-                            <option value="{{ choice.pk }}" {% if form.estudiante.value == choice.pk %}selected{% endif %}>
-                                {{ choice.nombre }} - Grupo {{ choice.grupo }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                    <div class="form-text">
-                        <i class="bi bi-info-circle me-1"></i>
-                        Selecciona el estudiante que realizó la medición
-                    </div>
+                    {% if estudiante_preseleccionado %}
+                        <!-- Para estudiantes regulares: campo de solo lectura -->
+                        <input type="text" class="form-control" value="{{ estudiante_preseleccionado.nombre }} - Grupo {{ estudiante_preseleccionado.grupo }}" readonly>
+                        <input type="hidden" name="{{ form.estudiante.name }}" value="{{ estudiante_preseleccionado.pk }}">
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Este es tu perfil de estudiante asignado
+                        </div>
+                    {% else %}
+                        <!-- Para administradores: selector normal -->
+                        <select name="{{ form.estudiante.name }}" 
+                                id="{{ form.estudiante.id_for_label }}"
+                                class="form-select {% if form.estudiante.errors %}is-invalid{% endif %}" 
+                                required>
+                            <option value="">-- Selecciona un estudiante --</option>
+                            {% for choice in form.estudiante.field.queryset %}
+                                <option value="{{ choice.pk }}" {% if form.estudiante.value == choice.pk %}selected{% endif %}>
+                                    {{ choice.nombre }} - Grupo {{ choice.grupo }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <div class="form-text">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Selecciona el estudiante que realizó la medición
+                        </div>
+                    {% endif %}
                     {% if form.estudiante.errors %}
                         <div class="invalid-feedback d-block">
                             {% for error in form.estudiante.errors %}

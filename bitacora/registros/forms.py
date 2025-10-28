@@ -9,10 +9,12 @@ from .models import Estudiante, MedicionPlantas, RegistroFotografico
 class RegistroForm(UserCreationForm):
     email = forms.EmailField(
         required=True,
+        label='Correo institucional',
         widget=forms.EmailInput(attrs={
             'class': 'form-control',
-            'placeholder': 'correo@ejemplo.com'
-        })
+            'placeholder': 'correo@institucion.edu'
+        }),
+        help_text='Usa tu correo institucional'
     )
     first_name = forms.CharField(
         max_length=30,
@@ -32,10 +34,20 @@ class RegistroForm(UserCreationForm):
             'placeholder': 'Tu apellido'
         })
     )
+    grupo = forms.IntegerField(
+        required=True,
+        label='Grupo/Curso',
+        min_value=1,
+        widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Número de grupo (ej: 1, 2, 3...)'
+        }),
+        help_text='Indica tu grupo o curso'
+    )
     
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email', 'password1', 'password2']
+        fields = ['username', 'first_name', 'last_name', 'email', 'grupo', 'password1', 'password2']
         widgets = {
             'username': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -53,6 +65,13 @@ class RegistroForm(UserCreationForm):
             'class': 'form-control',
             'placeholder': 'Confirmar contraseña'
         })
+    
+    def clean_email(self):
+        """Validar que el correo no esté ya registrado como estudiante"""
+        email = self.cleaned_data.get('email')
+        if Estudiante.objects.filter(correo_institucional=email).exists():
+            raise forms.ValidationError('Este correo ya está registrado.')
+        return email
 
 
 class LoginForm(AuthenticationForm):

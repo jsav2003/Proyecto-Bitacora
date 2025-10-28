@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Q
 from django.http import HttpResponse
+from functools import wraps
 from .models import Estudiante, MedicionPlantas, RegistroFotografico
 from .forms import EstudianteForm, MedicionPlantasForm, RegistroFotograficoForm, RegistroForm, LoginForm
 import numpy as np
@@ -16,6 +17,41 @@ import csv
 from decimal import Decimal
 
 
+# ===== DECORADORES PERSONALIZADOS =====
+
+def es_administrador(user):
+    """Verifica si el usuario es administrador (superusuario o staff)"""
+    return user.is_superuser or user.is_staff
+
+
+def requiere_administrador(view_func):
+    """
+    Decorador que requiere que el usuario sea administrador.
+    Muestra un mensaje amigable si no tiene permisos.
+    """
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        if not (request.user.is_superuser or request.user.is_staff):
+            messages.warning(request, 'No tienes permisos para acceder a esta función. Solo los administradores pueden realizar esta acción.')
+            return redirect('index')
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+
+def obtener_estudiante_del_usuario(user):
+    """
+    Obtiene el registro de Estudiante asociado al usuario actual.
+    Retorna None si no existe o si es administrador.
+    """
+    if user.is_superuser or user.is_staff:
+        return None
+    
+    try:
+        return user.estudiante
+    except Estudiante.DoesNotExist:
+        return None
+
+
 # ===== VISTAS DE AUTENTICACIÓN =====
 
 def registro_view(request):
@@ -25,9 +61,26 @@ def registro_view(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
         if form.is_valid():
+            # Crear el usuario
             user = form.save()
+            
+            # Crear automáticamente el estudiante asociado
+            nombre_completo = f"{user.first_name} {user.last_name}"
+            grupo = form.cleaned_data.get('grupo')
+            
+            estudiante = Estudiante.objects.create(
+                usuario=user,
+                nombre=nombre_completo,
+                correo_institucional=user.email,
+                grupo=grupo
+            )
+            
+            # Iniciar sesión automáticamente
             login(request, user)
-            messages.success(request, f'¡Bienvenido {user.username}! Tu cuenta ha sido creada exitosamente.')
+            messages.success(
+                request, 
+                f'¡Bienvenido {user.first_name}! Tu cuenta y perfil de estudiante han sido creados exitosamente.'
+            )
             return redirect('index')
     else:
         form = RegistroForm()
@@ -67,9 +120,25 @@ def logout_view(request):
 # ===== VISTAS EXISTENTES =====
 
 
-# Vista principal
+# Vista principal - Redirige según el rol del usuario
 @login_required
 def index(request):
+    # Si es superusuario o staff, mostrar vista de administrador
+    if request.user.is_superuser or request.user.is_staff:
+        return index_admin(request)
+    else:
+        # Si es estudiante regular, mostrar vista de estudiante
+        return index_estudiante(request)
+
+
+# Vista de administrador (la vista original)
+@login_required
+def index_admin(request):
+    # Verificar que el usuario es administrador
+    if not (request.user.is_superuser or request.user.is_staff):
+        messages.warning(request, 'No tienes permisos para acceder a esta sección.')
+        return redirect('index')
+    
     # Limpiar registros fotográficos huérfanos antes de contar
     RegistroFotografico.limpiar_registros_huerfanos()
     
@@ -92,9 +161,38 @@ def index(request):
     return render(request, 'registros/index.html', context)
 
 
+# Vista de estudiante (nueva)
+@login_required
+def index_estudiante(request):
+    # Obtener el estudiante asociado al usuario
+    estudiante = obtener_estudiante_del_usuario(request.user)
+    
+    # Limpiar registros fotográficos huérfanos antes de contar
+    RegistroFotografico.limpiar_registros_huerfanos()
+    
+    # Si el usuario tiene un estudiante asociado, mostrar solo sus datos
+    if estudiante:
+        mediciones_count = MedicionPlantas.objects.filter(estudiante=estudiante).count()
+        # Verificar si tiene suficientes mediciones para análisis (>=2)
+        analisis_count = 1 if mediciones_count >= 2 else 0
+    else:
+        # Si no tiene estudiante asociado, mostrar mensaje
+        mediciones_count = 0
+        analisis_count = 0
+        messages.info(request, 'Tu cuenta aún no está asociada a un estudiante. Contacta al administrador.')
+    
+    context = {
+        'mediciones_count': mediciones_count,
+        'analisis_count': analisis_count,
+        'estudiante': estudiante,
+    }
+    return render(request, 'registros/index_estudiante.html', context)
+
+
 # ===== VISTAS DE ESTUDIANTES =====
 
 @login_required
+@requiere_administrador
 def estudiante_crear(request):
     if request.method == 'POST':
         form = EstudianteForm(request.POST)
@@ -109,6 +207,7 @@ def estudiante_crear(request):
 
 
 @login_required
+@requiere_administrador
 def estudiante_listar(request):
     busqueda = request.GET.get('buscar', '')
     estudiantes = Estudiante.objects.all()
@@ -128,6 +227,7 @@ def estudiante_listar(request):
 
 
 @login_required
+@requiere_administrador
 def estudiante_editar(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
     
@@ -144,6 +244,7 @@ def estudiante_editar(request, pk):
 
 
 @login_required
+@requiere_administrador
 def estudiante_eliminar(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
     
@@ -159,6 +260,9 @@ def estudiante_eliminar(request, pk):
 
 @login_required
 def medicion_crear(request):
+    # Obtener el estudiante asociado al usuario si no es administrador
+    estudiante_usuario = obtener_estudiante_del_usuario(request.user)
+    
     if request.method == 'POST':
         form = MedicionPlantasForm(request.POST, request.FILES)
         if form.is_valid():
@@ -182,17 +286,41 @@ def medicion_crear(request):
             
             return redirect('medicion_listar')
     else:
-        form = MedicionPlantasForm()
+        # Si es estudiante, preseleccionar su perfil
+        if estudiante_usuario:
+            form = MedicionPlantasForm(initial={'estudiante': estudiante_usuario})
+        else:
+            form = MedicionPlantasForm()
     
-    return render(request, 'registros/medicion_form.html', {'form': form, 'accion': 'Registrar'})
+    context = {
+        'form': form, 
+        'accion': 'Registrar',
+        'estudiante_preseleccionado': estudiante_usuario
+    }
+    return render(request, 'registros/medicion_form.html', context)
 
 
 @login_required
 def medicion_listar(request):
+    # Obtener el estudiante asociado al usuario si no es administrador
+    estudiante_usuario = obtener_estudiante_del_usuario(request.user)
+    es_admin = request.user.is_superuser or request.user.is_staff
+    
     estudiante_id = request.GET.get('estudiante', '')
     mediciones = MedicionPlantas.objects.select_related('estudiante').prefetch_related('foto').all()
     
-    if estudiante_id:
+    # Si NO es administrador
+    if not es_admin:
+        # Si tiene estudiante asociado, mostrar solo sus mediciones
+        if estudiante_usuario:
+            mediciones = mediciones.filter(estudiante=estudiante_usuario)
+            estudiante_id = ''
+        else:
+            # Usuario sin estudiante asociado: mostrar lista vacía
+            mediciones = MedicionPlantas.objects.none()
+            messages.warning(request, 'Tu cuenta no está asociada a ningún estudiante. Contacta al administrador.')
+    elif estudiante_id:
+        # Solo los administradores pueden filtrar por estudiante
         mediciones = mediciones.filter(estudiante_id=estudiante_id)
     
     # Crear lista con mediciones y sus fotos (ahora es simple con OneToOne)
@@ -215,8 +343,27 @@ def medicion_listar(request):
 
 
 @login_required
+@login_required
 def medicion_editar(request, pk):
     medicion = get_object_or_404(MedicionPlantas, pk=pk)
+    
+    # VALIDACIÓN DE PERMISOS: Verificar que el estudiante puede editar esta medición
+    estudiante_usuario = obtener_estudiante_del_usuario(request.user)
+    es_admin = request.user.is_superuser or request.user.is_staff
+    
+    # Si NO es administrador
+    if not es_admin:
+        # Si tiene estudiante asociado, verificar que sea su medición
+        if estudiante_usuario:
+            if medicion.estudiante.id != estudiante_usuario.id:
+                messages.error(request, 'No tienes permiso para editar mediciones de otros estudiantes.')
+                return redirect('medicion_listar')
+        else:
+            # Usuario sin estudiante asociado: no puede editar nada
+            messages.error(request, 'Tu cuenta no está asociada a ningún estudiante. Contacta al administrador.')
+            return redirect('index')
+    
+    # Si llegó aquí, es administrador o es su propia medición
     
     # Obtener foto asociada si existe (usando try/except para OneToOne)
     try:
@@ -278,6 +425,23 @@ def medicion_editar(request, pk):
 def medicion_eliminar(request, pk):
     medicion = get_object_or_404(MedicionPlantas, pk=pk)
     
+    # VALIDACIÓN DE PERMISOS: Verificar que el estudiante puede eliminar esta medición
+    estudiante_usuario = obtener_estudiante_del_usuario(request.user)
+    es_admin = request.user.is_superuser or request.user.is_staff
+    
+    # Si NO es administrador
+    if not es_admin:
+        # Si tiene estudiante asociado, verificar que sea su medición
+        if estudiante_usuario:
+            if medicion.estudiante.id != estudiante_usuario.id:
+                messages.error(request, 'No tienes permiso para eliminar mediciones de otros estudiantes.')
+                return redirect('medicion_listar')
+        else:
+            # Usuario sin estudiante asociado: no puede eliminar nada
+            messages.error(request, 'Tu cuenta no está asociada a ningún estudiante. Contacta al administrador.')
+            return redirect('index')
+    
+    # Si llegó aquí, es administrador o es su propia medición
     if request.method == 'POST':
         medicion.delete()
         messages.success(request, 'Medición eliminada exitosamente.')
@@ -307,13 +471,27 @@ def registro_fotografico_listar(request):
     # Limpiar registros huérfanos automáticamente
     RegistroFotografico.limpiar_registros_huerfanos()
     
+    # Obtener el estudiante asociado al usuario si no es administrador
+    estudiante_usuario = obtener_estudiante_del_usuario(request.user)
+    es_admin = request.user.is_superuser or request.user.is_staff
+    
     estudiante_id = request.GET.get('estudiante', '')
     # Filtrar solo registros con medición asociada válida
     registros = RegistroFotografico.objects.select_related('estudiante', 'medicion').filter(
         medicion__isnull=False
     ).all()
     
-    if estudiante_id:
+    # Si NO es administrador
+    if not es_admin:
+        # Si tiene estudiante asociado, mostrar solo sus registros
+        if estudiante_usuario:
+            registros = registros.filter(estudiante_id=estudiante_usuario.id)
+        else:
+            # Usuario sin estudiante asociado: mostrar lista vacía
+            registros = RegistroFotografico.objects.none()
+            messages.warning(request, 'Tu cuenta no está asociada a ningún estudiante. Contacta al administrador.')
+    elif estudiante_id:
+        # Si es administrador y filtra por estudiante
         registros = registros.filter(estudiante_id=estudiante_id)
     
     estudiantes = Estudiante.objects.all()
@@ -321,12 +499,14 @@ def registro_fotografico_listar(request):
     context = {
         'registros': registros,
         'estudiantes': estudiantes,
-        'estudiante_seleccionado': estudiante_id
+        'estudiante_seleccionado': estudiante_id,
+        'es_estudiante': estudiante_usuario is not None,
     }
     return render(request, 'registros/registro_fotografico_lista.html', context)
 
 
 @login_required
+@requiere_administrador
 def registro_fotografico_eliminar(request, pk):
     registro = get_object_or_404(RegistroFotografico, pk=pk)
     
@@ -401,23 +581,38 @@ def calcular_coeficiente_correlacion(x, y, a0, a1):
 def analisis_dashboard(request):
     """
     Vista dashboard para mostrar todos los estudiantes disponibles para análisis
-    con funcionalidad de búsqueda y filtros
+    con funcionalidad de búsqueda y filtros.
+    Los estudiantes regulares solo ven su propio análisis.
     """
+    # Obtener el estudiante asociado al usuario si no es administrador
+    estudiante_usuario = obtener_estudiante_del_usuario(request.user)
+    es_admin = request.user.is_superuser or request.user.is_staff
+    
     # Obtener parámetros de búsqueda y filtros
     busqueda = request.GET.get('buscar', '').strip()
     grupo_filtro = request.GET.get('grupo', '')
     ajuste_filtro = request.GET.get('ajuste', '')
     ordenar = request.GET.get('ordenar', 'nombre')
     
-    # Obtener TODOS los estudiantes
-    estudiantes = Estudiante.objects.all()
+    # Si NO es administrador
+    if not es_admin:
+        # Si tiene estudiante asociado, mostrar solo su análisis
+        if estudiante_usuario:
+            estudiantes = Estudiante.objects.filter(id=estudiante_usuario.id)
+        else:
+            # Usuario sin estudiante asociado: mostrar lista vacía
+            estudiantes = Estudiante.objects.none()
+            messages.warning(request, 'Tu cuenta no está asociada a ningún estudiante. Contacta al administrador.')
+    else:
+        # Si es administrador, mostrar todos
+        estudiantes = Estudiante.objects.all()
     
-    # Aplicar filtro de búsqueda por nombre
-    if busqueda:
+    # Aplicar filtro de búsqueda por nombre (solo para administradores)
+    if busqueda and es_admin:
         estudiantes = estudiantes.filter(nombre__icontains=busqueda)
     
-    # Aplicar filtro por grupo
-    if grupo_filtro:
+    # Aplicar filtro por grupo (solo para administradores)
+    if grupo_filtro and es_admin:
         estudiantes = estudiantes.filter(grupo=grupo_filtro)
     
     # Ordenar inicialmente
@@ -504,6 +699,7 @@ def analisis_dashboard(request):
         'grupo_filtro': grupo_filtro,
         'ajuste_filtro': ajuste_filtro,
         'ordenar': ordenar,
+        'es_estudiante': estudiante_usuario is not None,
     }
     
     return render(request, 'registros/analisis_dashboard.html', context)
@@ -514,8 +710,27 @@ def analisis_regresion(request, estudiante_id):
     """
     Vista para mostrar el análisis de regresión lineal del crecimiento de plantas
     con capacidad de predicción temporal (solo visible después de calcular)
+    Los estudiantes solo pueden ver su propio análisis.
     """
     estudiante = get_object_or_404(Estudiante, pk=estudiante_id)
+    
+    # VALIDACIÓN DE PERMISOS: Verificar que el estudiante puede ver este análisis
+    estudiante_usuario = obtener_estudiante_del_usuario(request.user)
+    es_admin = request.user.is_superuser or request.user.is_staff
+    
+    # Si NO es administrador
+    if not es_admin:
+        # Si tiene estudiante asociado, verificar que sea el suyo
+        if estudiante_usuario:
+            if estudiante_usuario.id != estudiante.id:
+                messages.error(request, 'No tienes permiso para ver el análisis de otros estudiantes.')
+                return redirect('analisis_dashboard')
+        else:
+            # Usuario sin estudiante asociado: no puede ver ningún análisis
+            messages.error(request, 'Tu cuenta no está asociada a ningún estudiante. Contacta al administrador.')
+            return redirect('index')
+    
+    # Si llegó aquí, es administrador o es su propio análisis
     mediciones = MedicionPlantas.objects.filter(estudiante=estudiante).order_by('dia')
     
     # Verificar que haya suficientes datos para predicción (mínimo 7 mediciones)
@@ -641,8 +856,27 @@ def analisis_regresion(request, estudiante_id):
 def exportar_csv(request, estudiante_id):
     """
     Exporta los datos de mediciones de un estudiante a CSV
+    Los estudiantes solo pueden exportar sus propios datos.
     """
     estudiante = get_object_or_404(Estudiante, pk=estudiante_id)
+    
+    # VALIDACIÓN DE PERMISOS: Verificar que el estudiante puede exportar estos datos
+    estudiante_usuario = obtener_estudiante_del_usuario(request.user)
+    es_admin = request.user.is_superuser or request.user.is_staff
+    
+    # Si NO es administrador
+    if not es_admin:
+        # Si tiene estudiante asociado, verificar que sean sus datos
+        if estudiante_usuario:
+            if estudiante_usuario.id != estudiante.id:
+                messages.error(request, 'No tienes permiso para exportar los datos de otros estudiantes.')
+                return redirect('analisis_dashboard')
+        else:
+            # Usuario sin estudiante asociado: no puede exportar nada
+            messages.error(request, 'Tu cuenta no está asociada a ningún estudiante. Contacta al administrador.')
+            return redirect('index')
+    
+    # Si llegó aquí, es administrador o son sus propios datos
     mediciones = MedicionPlantas.objects.filter(estudiante=estudiante).order_by('dia')
     
     # Crear respuesta HTTP con tipo CSV
